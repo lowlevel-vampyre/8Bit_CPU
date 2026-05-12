@@ -11,6 +11,9 @@ Trello: https://trello.com/invite/b/6a033a25e39493d68ccb1311/ATTIa34ab2e7232d55b
 ---
 ## Project Organization
 
+### Documentation
+<p>This is where all of our project specifications are stored</p>
+
 ### Journals
 <p>Journals are where our design thoughts go. They are a stream of conciousness that we write while we are working on a particular task. We use them to keep each other updated on design decisions, think through problems, and to use as a reminder on why certain decisions were made. The format for each log is name_date_project.<p>
 
@@ -19,6 +22,3 @@ Trello: https://trello.com/invite/b/6a033a25e39493d68ccb1311/ATTIa34ab2e7232d55b
 
 ### VHDL
 <p>Our VHDL code goes here. We try our best to comment for understanding, but we often get lazy. If you do not understand what is going on, refer to the "Relevant Journals" linked at the top of each file.<p>
-
-### Documentation
-<p>This is where all of our project specifications are stored</p>
