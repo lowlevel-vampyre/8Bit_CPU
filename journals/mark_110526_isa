@@ -1,1 +1,75 @@
-The most important 
+The most fundamental part of a CPU is the Instruction Set Architecture (ISA). When starting our project, aside from bit width and instruction width, this was the first part that needed to be defined. Since I am a CE noob, I decided to pick something I was already familiar with, so I decided to base the ISA off of MIPS16. This is the base ISA:
+
+Instruction Width: 16 bits.
+Data Width: 8 bits.
+Address width: 12 bits.
+
+R-Type:  [ op: 4 bits | Rs: 4 bits | Rd: 4 bits | funct: 4 bits]
+I1-Type: [ op: 4 bits | Rd: 4 bits |         Imm: 8 bits       ]
+I2-Type: [ op: 4 bits |              Imm: 12 bits              ]
+J-Type:  [ op: 4 bits |              Imm: 12 bits              ]
+
+This semetric architecture was modified from MIPS16's operation section size of 3 bits, register size of 3 bits, and funct size of 4 bits, which was done for a few reasons. The biggest difference between ours and MIPS is that since MIPS has 3 bits for register indexing, they can fit in 3 registers per instruction. This allows you to have two source registers and a completely separate destination register. We neglected to do this for a few reasons. First is fuck programmers. I dont give a fuck about me programming this in assembly in the future. The added complexity of using three registers at a time is not worth the added convenience of simpler programs. Hell, simply having pseudo instructions that do that for you are totally fine. Second, having 3 bits register indexing means we have only have 8 registers. While this may be fine, allowing us to have 16 registers instead allows the VLSI part of our project to be more difficult, therefore more credibility. Off course, you may ask why trade difficulty in one place for another. The asnwer is that the VLSI cred is easier to implement and simultaneosly cooler (to me) than architecture cred. Dave from TI doesn't give a shit that it can do triple register instructions anyway. But I digress. 
+
+Using four bits for register indexing allows us 16 registers. We plan to use a lot of these as "temp" registers. The last two instruction types, I2 and J, don't use a register at all. Since we have a address width of 12 bits, we don't have any space for registers. These two instructions will, by defualt, use one of the 16 registers, which will be designated as a temp register. Speaking of, let me show you how I plan to lay out the registers:
+
+| Index |  Symbol(s)  |
+|   0	|  $zero/$0   |
+|   1   |   $one/$1   |
+|   2   |     $R0     |
+|   3   |     $R1     |
+|   4   |     $R2     |
+|   5   |     $R3     |
+|   6   |     $R4     |
+|   7   |     $R5     |
+|   8   |     $R6     |
+|   9   |     $R7     |
+|   10  |     $T0     |
+|   11  |     $T1     |
+|   12  |     $T2     |
+|   13  |     $LR     |
+|   14  |     $CR     |
+|   15  |     $SP     |
+
+Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, I relied on AI and after some back and forth came up with this:
+
+R-Type: opcode 0000, funct 4 bits, 16 instructions:
+  0000 0000  ADD
+  0000 0001  SUB
+  0000 0010  ADC
+  0000 0011  SBC
+  0000 0100  AND
+  0000 0101  OR
+  0000 0110  XOR
+  0000 0111  NOT
+  0000 1000  SHL
+  0000 1001  SHR
+  0000 1010  SAR
+  0000 1011  CMP
+  0000 1100  MOV
+  0000 1101  NEG
+  0000 1110  LOAD   $Rdst, ($Rsrc)
+  0000 1111  STORE  ($Rdst), $Rsrc
+
+I-Type  opcodes 0001-0110, 6 instructions:
+  0001  LDI    $Rdst, imm8
+  0010  ADDI   $Rdst, imm8
+  0011  SUBI   $Rdst, imm8
+  0100  ANDI   $Rdst, imm8
+  0101  ORI    $Rdst, imm8
+  0110  XORI   $Rdst, imm8
+
+I2-Type  opcodes 0111-1010, 4 instructions:
+  0111  LDAT0  addr12    load RAM[addr12] into $T0
+  1000  LDAT1  addr12    load RAM[addr12] into $T1
+  1001  STAT0  addr12    store $T0 to RAM[addr12]
+  1010  STAT1  addr12    store $T1 to RAM[addr12]
+
+J-Type  opcodes 1011-1111, 5 slots:
+  1011  J      addr12
+  1100  CALL   addr12
+  1101  JEQ    offset12
+  1110  JNE    offset12
+  1111  JLT    
+
+So, most of this is pretty self explanatory. A lot of the common assembly instructions that are missing are pseudo-instructions. 
