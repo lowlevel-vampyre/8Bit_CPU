@@ -1,4 +1,6 @@
-The most fundamental part of a CPU is the Instruction Set Architecture (ISA). When starting our project, aside from bit width and instruction width, this was the first part that needed to be defined. Since I am a CE noob, I decided to pick something I was already familiar with, so I decided to base the ISA off of MIPS16. This is the base ISA:
+The most fundamental part of a CPU is the Instruction Set Architecture (ISA). When starting our project, aside from bit width and instruction width, 
+this was the first part that needed to be defined. Since I am a CE noob, I decided to pick something I was already familiar with, so I decided to 
+base the ISA off of MIPS16. This is the base ISA:
 
 Instruction Width: 16 bits.
 Data Width: 8 bits.
@@ -9,9 +11,20 @@ I1-Type: [ op: 4 bits | Rd: 4 bits |         Imm: 8 bits       ]
 I2-Type: [ op: 4 bits |              Imm: 12 bits              ]
 J-Type:  [ op: 4 bits |              Imm: 12 bits              ]
 
-This semetric architecture was modified from MIPS16's operation section size of 3 bits, register size of 3 bits, and funct size of 4 bits, which was done for a few reasons. The biggest difference between ours and MIPS is that since MIPS has 3 bits for register indexing, they can fit in 3 registers per instruction. This allows you to have two source registers and a completely separate destination register. We neglected to do this for a few reasons. First is fuck programmers. I dont give a fuck about me programming this in assembly in the future. The added complexity of using three registers at a time is not worth the added convenience of simpler programs. Hell, simply having pseudo instructions that do that for you are totally fine. Second, having 3 bits register indexing means we have only have 8 registers. While this may be fine, allowing us to have 16 registers instead allows the VLSI part of our project to be more difficult, therefore more credibility. Off course, you may ask why trade difficulty in one place for another. The asnwer is that the VLSI cred is easier to implement and simultaneosly cooler (to me) than architecture cred. Dave from TI doesn't give a shit that it can do triple register instructions anyway. But I digress. 
+This semetric architecture was modified from MIPS16's operation section size of 3 bits, register size of 3 bits, and funct size of 4 bits, which 
+was done for a few reasons. The biggest difference between ours and MIPS is that since MIPS has 3 bits for register indexing, they can fit in 3 
+registers per instruction. This allows you to have two source registers and a completely separate destination register. We neglected to do this 
+for a few reasons. First is fuck programmers. I dont give a fuck about me programming this in assembly in the future. The added complexity of 
+using three registers at a time is not worth the added convenience of simpler programs. Hell, simply having pseudo instructions that do that for 
+you are totally fine. Second, having 3 bits register indexing means we have only have 8 registers. While this may be fine, allowing us to have 
+16 registers instead allows the VLSI part of our project to be more difficult, therefore more credibility. Off course, you may ask why trade 
+difficulty in one place for another. The asnwer is that the VLSI cred is easier to implement and simultaneosly cooler (to me) than architecture 
+cred. Dave from TI doesn't give a shit that it can do triple register instructions anyway. But I digress. 
 
-Using four bits for register indexing allows us 16 registers. We plan to use a lot of these as "temp" registers. The last two instruction types, I2 and J, don't use a register at all. Since we have a address width of 12 bits, we don't have any space for registers. These two instructions will, by defualt, use one of the 16 registers, which will be designated as a temp register. Speaking of, let me show you how I plan to lay out the registers:
+Using four bits for register indexing allows us 16 registers. We plan to use a lot of these as "temp" registers. The last two instruction types, 
+I2 and J, don't use a register at all. Since we have a address width of 12 bits, we don't have any space for registers. These two instructions 
+will, by defualt, use one of the 16 registers, which will be designated as a temp register. Speaking of, let me show you how I plan to lay out the 
+registers:
 
 | Index |  Symbol(s)  |
 |   0	|  $zero/$0   |
@@ -31,7 +44,8 @@ Using four bits for register indexing allows us 16 registers. We plan to use a l
 |   14  |     $CR     |
 |   15  |     $SP     |
 
-Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, I relied on AI and after some back and forth came up with this:
+Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
+I relied on AI and after some back and forth came up with this:
 
 R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 0000  ADD
