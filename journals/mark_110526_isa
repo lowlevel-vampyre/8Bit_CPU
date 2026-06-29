@@ -13,13 +13,13 @@ J-Type:  [ op: 4 bits |              Imm: 12 bits              ]
 
 This architecture was modified from MIPS16's op-code width of 3 bits, register width of 3 bits, and funct width of 4 bits. The register bit-width
 is the biggest difference between ours and MIPS: since MIPS has 3 bits for register indexing, they can fit in 3 registers per instruction. This 
-allows you to have two source registers and a completely separate destination register for commands like "add a, b, c". We neglected to do this 
+allows you to have two source registers and a completely separate destination register for commands like "add a, b, c". I neglected to do this 
 for a few reasons: 
 
 The first is fuck programmers (aka me). Through careful thought and consideration, I decided that the added complexity of 
 creating an architecture that uses three registers at a time is not worth the added convenience of simpler programs. I decide, possibly foolishly,
 that simply having pseudo instructions that do that for you are totally fine. In addition, since we are using CPLD's as the hardware for the CPU,
-execution speed is not an issue, and more instructions are likely to be doable, as we are estimating this could be a 5Mhz CPU in the best case,
+execution speed is not an issue, and more instructions are likely to be doable, as I am estimating this could be a 5Mhz CPU in the best case,
 which is plenty fast. 
 
 Second, having 3 bits register indexing means we have only have 8 registers. While this may be fine, I would prefer to have more registers if 
@@ -28,28 +28,28 @@ where I think it matters. In addtion, this allows the VLSI part of our project t
 ask why trade difficulty in one place for another. The asnwer is that the VLSI cred is easier to implement and simultaneosly cooler (to me) than 
 architecture cred. Dave from TI most likley won't care that it can do triple register instructions anyway. 
 
-Using four bits for register indexing allows us 16 registers. We plan to use a lot of these as "temp" registers. The last two instruction types, 
+Using four bits for register indexing allows us 16 registers. I plan to use a lot of these as "temp" registers. The last two instruction types, 
 I2 and J, don't use a register at all. Since we have a address width of 12 bits, we don't have any space for registers. These two instructions 
 will, by default, use one of the 16 registers, which will be designated as a temp register. Speaking of, let me show you how I plan to lay out the 
 registers:
 
-| Index |  Symbol(s)  |
-|   0	  |  $zero/$0   |
-|   1   |   $one/$1   |
-|   2   |     $R0     |
-|   3   |     $R1     |
-|   4   |     $R2     |
-|   5   |     $R3     |
-|   6   |     $R4     |
-|   7   |     $R5     |
-|   8   |     $R6     |
-|   9   |     $R7     |
-|   10  |     $T0     |
-|   11  |     $T1     |
-|   12  |     $T2     |
-|   13  |     $LR     |
-|   14  |     $CR     |
-|   15  |     $SP     |
+| Index |  Symbol(s)  |   Purpose   | Width |
+|   0	  |  $zero/$0   |  returns 0  | 8 bit |
+|   1   |   $one/$1   |  returns 1  | 8 bit |
+|   2   |     $R0     |  gen. purp. | 8 bit |
+|   3   |     $R1     |  gen. purp. | 8 bit |
+|   4   |     $R2     |  gen. purp. | 8 bit |
+|   5   |     $R3     |  gen. purp. | 8 bit |
+|   6   |     $R4     |  gen. purp. | 8 bit |
+|   7   |     $R5     |  gen. purp. | 8 bit |
+|   8   |     $R6     |  gen. purp. | 8 bit |
+|   9   |     $R7     |  gen. purp. | 8 bit |
+|   10  |     $T0     | Scratch pad | 8 bit |
+|   11  |     $T1     |  LOAD Reg   | 8 bit |
+|   12  |     $T2     |  STORE Reg  | 8 bit |
+|   13  |     $LR     |   Ret Addr  | 12bit |
+|   14  |     $CR     | 
+|   15  |     $SP     |  Stack Ptr  |
 
 Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
 I relied on AI and after some back and forth came up with this:
@@ -72,7 +72,7 @@ R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 1110  LOAD   $Rdst, ($Rsrc)
   0000 1111  STORE  ($Rdst), $Rsrc
 
-I-Type  opcodes 0001-0110, 6 instructions:
+I1-Type  opcodes 0001-0110, 6 instructions:
   0001  LDI    $Rdst, imm8
   0010  ADDI   $Rdst, imm8
   0011  SUBI   $Rdst, imm8
@@ -93,4 +93,9 @@ J-Type  opcodes 1011-1111, 5 slots:
   1110  JNE    offset12
   1111  JLT    
 
-So, most of this is pretty self explanatory. A lot of the common assembly instructions that are missing are pseudo-instructions. 
+So, most of this is pretty self explanatory. But there are more types of instructions than MIPS, which is to get around some archtecture challenges, 
+the biggest one being how to move data from the registers to the SRAM modules on the board. The way I are planning doing this is by using temp registers.
+The temp registers are special registers that the CPU uses for memory access. If a programmer wanted to read from memory, they would execute a read command to
+an address, then either store that data in a register for later, or use the temp register when making calculations. While it is undecided at this moment, I
+could imagine that we would use $T1 for storing data from reads, and $T2 for storing data to SRAM. Regardless, all 3 ($T0, $T1, $T2) act as general purpose scratchpad 
+registers.
