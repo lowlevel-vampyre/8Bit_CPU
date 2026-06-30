@@ -35,15 +35,15 @@ registers:
 Accessible Registers
 | Index |  Symbol(s)  |   Purpose   | Width |
 |   0   |  $zero/$0   |  returns 0  | 8 bit |
-|   1   |     $R0     |  gen purp   | 8 bit |
-|   2   |     $R1     |  gen purp   | 8 bit |
-|   3   |     $R2     |  gen purp   | 8 bit |
-|   4   |     $R3     |  gen purp   | 8 bit |
-|   5   |     $R4     |  gen purp   | 8 bit |
-|   6   |     $R5     |  gen purp   | 8 bit |
-|   7   |     $R6     |  gen purp   | 8 bit |
-|   8   |     $R7     |  gen purp   | 8 bit |
-|   9   |     $R8     |  gen purp   | 8 bit |
+|   1   |   $one/$1   |  gen purp   | 8 bit |
+|   2   |     $R0     |  gen purp   | 8 bit |
+|   3   |     $R1     |  gen purp   | 8 bit |
+|   4   |     $R2     |  gen purp   | 8 bit |
+|   5   |     $R3     |  gen purp   | 8 bit |
+|   6   |     $R4     |  gen purp   | 8 bit |
+|   7   |     $R5     |  gen purp   | 8 bit |
+|   8   |     $R6     |  gen purp   | 8 bit |
+|   9   |     $R7     |  gen purp   | 8 bit |
 |   10  |     $T0     | Temp I-Type | 8 bit |
 |   11  |     $A0     |  func para  | 8 bit |
 |   12  |     $A1     |  func para  | 8 bit |
@@ -55,22 +55,25 @@ Now, to understand the whole setup you will need to understand how I am planning
 I relied on AI and after some back and forth came up with this:
 
 R-Type: opcode 0000, funct 4 bits, 16 instructions:
+  # Normal R-Type
   0000 0000  ADD    Rd = Rd + Rx, Sets Carry Flag
-  0000 0001  SUB    Rd = Rd - Rx, Sets Neg or Equal Flag
-  0000 0010  
-  0000 0011  
-  0000 0100  AND    Rd = Rd & Rx
-  0000 0101  OR     Rd = Rd | Rx
-  0000 0110  XOR    Rd = Rd ^ Rx
-  0000 0111  NOT    Rd = ~Rx
-  0000 1000  SLL    Rd = Rd << Rx
-  0000 1001  SRL    Rd = Rd >> Rx
-  0000 1010  MOV    Rd = Rx
-  0000 1011  NEG    Rd = -Rx
-  0000 1100  
-  0000 1101  
-  0000 1110  LOAD   Rd = RAM[Rx]
-  0000 1111  STORE  RAM[Rd] = Rx
+  0000 0001  SUB    Rd = Rd - Rx, Sets Neg or Equal Flag 
+  0000 0010  AND    Rd = Rd & Rx
+  0000 0011  OR     Rd = Rd | Rx
+  0000 0100  XOR    Rd = Rd ^ Rx
+  0000 0101  SLL    Rd = Rd << Rx
+  0000 0110  SRL    Rd = Rd >> Rx
+  0000 0111  MOV    Rd = Rx
+
+  # Pointer R-Type
+  0000 1000  ADD    &Rd = &Rd + Rx, Sets Carry Flag
+  0000 1001  SUB    &Rd = &Rd - Rx, Sets Neg or Equal Flag
+  0000 1010  
+  0000 1011
+  0000 1100  POP    Rd = &Rx, auto decrements the pointer after
+  0000 1101  PUSH   RAM[&Rd] = Rx, auto increments the pointer after
+  0000 1110  LOAD   Rd = &Rx
+  0000 1111  STORE  RAM[&Rd] = Rx
 
 I1-Type  opcodes 0001-0110, 5 instructions:
   0001       ADDI   Rd = Rd + imm8, Sets Carry Flag
@@ -96,6 +99,27 @@ J-Type  opcodes 1010-1111, 6 instructions:
 So, most of this is pretty self explanatory. But there are more types of instructions than in MIPS16, which is to get around some architecture 
 challenges. The biggest one being how to move data from the registers to the SRAM modules on the board. This is done by spliting the attached 
 SRAM module into 3 pages:
+
+HELLO I AM STILL TRYING TO FIGURE OUT HOW THE HECK TO DO THIS SHIT. For future recollection, I need to do these 3 things:
+  - Store variables on the stack in a single line, like:
+        STORE $R0, $SP  # <--- This command should automagically increment the value in the second register
+        LOAD $R0, $SP   # <--- This command should automagically decrement the value in the second register
+
+  - Store Values in the global stack, and be able to easily iterate over the array, like so:
+         MOV $R0, 0x0CC    # Start of the Ghost Array (for a Pac-Man Example)
+         MOVI $R1, 0x05    # The number of elements in the array
+         LOOP:
+            ADD &R0, $1      # Increment the Value Referenced by the Pointer
+            ADD $R0, $1      # Increment the Pointer Address
+
+            SUB $R1, $1      # Decrement the Loop Counter
+            JNE LOOP         # Compiler converts the label to an address
+
+  - Store Values in RAM
+        LDRAM 0xFEE          # Modify, say, the coords of a sprite
+        MOVI $R5, 2
+        SLL $T0, $R5         # Multiply the value of the sprite by 2
+        STRAM 0xFEE          # Moves the value of $T0 into 0xFEE
 
 The first page is called the Global Stack Page (0x000 - 0x0FF). These values can be accessed by R-Type LOAD/STORE operations, and use 
 pointers to access the addresses. This page is largely meant for allocating arrays and other large, repetitive objects. The size limitation 
