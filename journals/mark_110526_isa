@@ -43,8 +43,8 @@ Accessible Registers
 |   6   |     $R5     |  gen purp   | 8 bit |
 |   7   |     $R6     |  gen purp   | 8 bit |
 |   8   |     $R7     |  gen purp   | 8 bit |
-|   9   |     $T0     | Temp I-Type | 8 bit |
-|   10  |     $T1     | Temp I-Type | 8 bit |
+|   9   |     $R8     |  gen purp   | 8 bit |
+|   10  |     $T0     | Temp I-Type | 8 bit |
 |   11  |     $A0     |  func para  | 8 bit |
 |   12  |     $A1     |  func para  | 8 bit |
 |   13  |     $A2     |  func para  | 8 bit |
@@ -57,33 +57,33 @@ I relied on AI and after some back and forth came up with this:
 R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 0000  ADD    Rd = Rd + Rx, Sets Carry Flag
   0000 0001  SUB    Rd = Rd - Rx, Sets Neg or Equal Flag
-  0000 0010  ADC    Rd = Rd + Rx + carry
-  0000 0011  SBC    Rd = Rd - Rx - carry
+  0000 0010  
+  0000 0011  
   0000 0100  AND    Rd = Rd & Rx
   0000 0101  OR     Rd = Rd | Rx
   0000 0110  XOR    Rd = Rd ^ Rx
   0000 0111  NOT    Rd = ~Rx
   0000 1000  SLL    Rd = Rd << Rx
   0000 1001  SRL    Rd = Rd >> Rx
-  0000 1010  SRA    Rd = Rd >> Rx
-  0000 1011
-  0000 1100  MOV    Rd = Rx
-  0000 1101  NEG    Rd = -Rx
+  0000 1010  MOV    Rd = Rx
+  0000 1011  NEG    Rd = -Rx
+  0000 1100  
+  0000 1101  
   0000 1110  LOAD   Rd = RAM[Rx]
   0000 1111  STORE  RAM[Rd] = Rx
 
 I1-Type  opcodes 0001-0110, 5 instructions:
-  0001       MOVI   Rd = imm8
-  0010       ADDI   Rd = Rd + imm8
-  0011       SUBI   Rd = Rd - imm8
-  0100       ANDI   Rd = Rd & imm8
-  0101       ORI    Rd = Rd | imm8
-  0110       XORI   Rd = Rd ^ imm8
-  0111       
+  0001       ADDI   Rd = Rd + imm8, Sets Carry Flag
+  0010       SUBI   Rd = Rd - imm8, Sets Neg or Equal Flag
+  0011       ANDI   Rd = Rd & imm8
+  0100       ORI    Rd = Rd | imm8
+  0101       MOVI   Rd = imm8
+  0110       LOADI  Rd = RAM[imm8]
+  0111       STOREI RAM[imm8] = Rd
 
 I2-Type  opcodes 1000-1001, 2 instructions:
-  1000       LDAT0  $T0 = RAM[addr12]
-  1001       STAT1  RAM[addr12] = $T1
+  1000       LDRAM  $T0 = RAM[addr12]
+  1001       STRAM  RAM[addr12] = $T0
 
 J-Type  opcodes 1010-1111, 6 instructions:
   1010       J      PC = imm12
@@ -93,8 +93,40 @@ J-Type  opcodes 1010-1111, 6 instructions:
   1110       CALL   Move Value inside PC to hidden Return Stack, and increment Return Stack
   1111       RET    Move Value inside hidden Return Stack to PC, and decrement Return Stack
 
-So, most of this is pretty self explanatory. But there are more types of instructions than MIPS, which is to get around some architecture 
-challenges, the biggest one being how to move data from the registers to the SRAM modules on the board. The way I am planning on doing 
+So, most of this is pretty self explanatory. But there are more types of instructions than in MIPS16, which is to get around some architecture 
+challenges. The biggest one being how to move data from the registers to the SRAM modules on the board. This is done by spliting the attached 
+SRAM module into 3 pages:
+
+The first page is called the Global Stack Page (0x000 - 0x0FF). These values can be accessed by R-Type LOAD/STORE operations, and use 
+pointers to access the addresses. The size limitation has to do with the 8-bit width of each register, meaning each register can only address the 
+bottom 256 bytes of addressable memory. To get around this, we use our second page:
+
+The second page is called the Private Stack Page (0x100 - 0x1FF). This section is only accessible using either the R-Type LOAD/STORE using the stack 
+pointer, or with regular I2-Type load and store. This section is purely intended to offer stack page allocation. For any nested function tree, you 
+are bound to use more than 8 values over the course of the program flow. The stack pointer allows you to place all your values into the stack before 
+escaping into another function. But for the majority of your saved values, you would use the third page:
+
+The third and final page on the 2KB SRAM module is the Heap Page. This is your traditional, writable heap for allocating miscelanneous values. Due to
+the limitations of the instruction width, values are tedious to write and retrieve, requiring 2 commands:
+
+    1  MOV  $T1, $R1   # Move the Value you want to store into the Transfer Register
+    2  STRAM 0xC4B     # Store the value inside the transfer register to the 12-bit address
+
+And even worse if you want to do any math on it:
+
+    1  LDRAM 0xC4B
+    2  ADDI $T0, 1
+    3  STRAM 0XC4B
+    
+What I would obviously like to do is access the values themselves to do math, but that is not currently possible for all 12-bits of addressing. However,
+I theoretically could do it for the bottom 8 bits of addressing, which is where the R-Type commands come in. With these commands, a pointer flag is set,
+meaning that the values inside the registers are used to control the address mux. This way 
+
+But that is not currently possible. But, by using the R-Type loads, stuff is a little simpler. The 4th bit in th e
+
+
+
+The way I am planning on doing 
 this is by using temp registers. The temp registers are special registers that the CPU uses for memory access. If a programmer wanted to 
 read from memory, they would execute a read command to an address, then either store that data in a register for later, or use the temp 
 register when making calculations. The I2 instructions will move data to these registers, $T0 and $T1, depening on the command. The 
@@ -119,22 +151,23 @@ as well have a look at it:
 - 4KB Addressable Memory
 - Includes Memory Mapped IO
 
-# RAM (0x000 - 0x7FF, 2KB SRAM Chip)
-    0x000 - 0x0FF    Static Stack Page (256 bytes)
+# RAM (0x000 - 0x7FF, 2KB 8-Bit SRAM Chip)
+    0x000 - 0x0FF    Global Stack Page (256 bytes)
                      Accessible using Register Pointers with R-type LOAD/STORE
+                     Pointer Registers can access this by connecting the remaining
+                         4 address bits to 0.
 
-    0x100 - 0x1FF    Dynamic Stack Page (256 bytes)
+    0x100 - 0x1FF    Private Stack Page (256 bytes)
                      Only accessible using stack pointer with R-Type LOAD/STORE
-                     Stack Pointer is paired to these values by pairing the 9th
-                         bit to 1, turning 0x000 -> 0x100
+                     Stack Pointer is paired to these values by connecting the 9th
+                         address bit to 1, turning 0x000 -> 0x100
     
-    0x100 - 0x7FF    Extended RAM (~1.5KB)
-                     I2-type only (LDAT0/LDAT1/STAT0/STAT1)
-                     Larger data structures that do not need
-                     fast register-indirect access
-# Return Space
-0x800 - 0x80F
-0x810 - 0xFEF        Unassigned (reserved for expansion)
+    0x100 - 0x7FF    Heap (~1.5KB)
+                     I2-type only (LDRAM/STRAM)
+                     For larger data structures that do not need
+                         to be modified often
+
+0x800 - 0xFEF        Unassigned (reserved for expansion)
 
 # GPU VRAM
     0xF?? - 0xF??    GPU sprite registers
