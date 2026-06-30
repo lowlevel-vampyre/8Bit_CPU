@@ -71,20 +71,21 @@ R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 1101  NEG    Rd = -Rx
   0000 1110  LOAD   Rd = RAM[Rx]
   0000 1111  STORE  RAM[Rd] = Rx
+  pseudo     POP    Rd = RAM[SP]
+  pseudo     PUSH   RAM[SP] = Rx
 
-I1-Type  opcodes 0001-0110, 6 instructions:
-  0001       
-  0010       ADDI   Rd = Rd + imm8 (with MOVI Rd = $0 + imm8 pseudo-instr)
-  0011       SUBI   Rd = Rd - imm8
-  0100       ANDI   Rd = Rd & imm8
-  0101       ORI    Rd = Rd | imm8
-  0110       XORI   Rd = Rd ^ imm8
+I1-Type  opcodes 0001-0110, 5 instructions:
+  0001       ADDI   Rd = Rd + imm8
+  0010       SUBI   Rd = Rd - imm8
+  0011       ANDI   Rd = Rd & imm8
+  0100       ORI    Rd = Rd | imm8
+  0101       XORI   Rd = Rd ^ imm8
 
-I2-Type  opcodes 0111-1010, 4 instructions:
-  0111       LDAT0  $T0 = RAM[addr12]
-  1000       LDAT1  $T1 = RAM[addr12]
-  1001       STAT0  RAM[addr12] = $T0
-  1010       STAT1  RAM[addr12] = $T1
+I2-Type  opcodes 0110-1001, 4 instructions:
+  0110       LDAT0  $T0 = RAM[addr12]
+  0111       LDAT1  $T1 = RAM[addr12]
+  1000       STAT0  RAM[addr12] = $T0
+  1001       STAT1  RAM[addr12] = $T1
 
 J-Type  opcodes 1010-1111, 6 instructions:
   1010       J      PC = imm12
