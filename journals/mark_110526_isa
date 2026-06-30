@@ -48,15 +48,15 @@ Accessible Registers
 |   11  |     $R9     |  gen. purp. | 8 bit |
 |   12  |     $T0     | Temp I-Type | 8 bit |
 |   13  |     $T1     | Temp I-Type | 8 bit |
-|   14  |     $LR     |   Ret Addr  | 12bit |
+|   14  |     $RA     |   Ret Addr  | 12bit |
 |   15  |     $SP     |  Stack Ptr  | 12bit |
 
 Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
 I relied on AI and after some back and forth came up with this:
 
 R-Type: opcode 0000, funct 4 bits, 16 instructions:
-  0000 0000  ADD    Rd = Rd + Rx
-  0000 0001  SUB    Rd = Rd - Rx
+  0000 0000  ADD    Rd = Rd + Rx, Sets Carry Flag
+  0000 0001  SUB    Rd = Rd - Rx, Sets Neg or Equal Flag
   0000 0010  ADC    Rd = Rd + Rx + carry
   0000 0011  SBC    Rd = Rd - Rx - carry
   0000 0100  AND    Rd = Rd & Rx
