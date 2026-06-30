@@ -98,11 +98,12 @@ challenges. The biggest one being how to move data from the registers to the SRA
 SRAM module into 3 pages:
 
 The first page is called the Global Stack Page (0x000 - 0x0FF). These values can be accessed by R-Type LOAD/STORE operations, and use 
-pointers to access the addresses. The size limitation has to do with the 8-bit width of each register, meaning each register can only address the 
-bottom 256 bytes of addressable memory. To get around this, we use our second page:
+pointers to access the addresses. This page is largely meant for allocating arrays and other large, repetitive objects. The size limitation 
+has to do with the 8-bit width of each register, meaning each register can only address the bottom 256 bytes of addressable memory. To get 
+around this, we use our second page:
 
 The second page is called the Private Stack Page (0x100 - 0x1FF). This section is only accessible using either the R-Type LOAD/STORE using the stack 
-pointer, or with regular I2-Type load and store. This section is purely intended to offer stack page allocation. For any nested function tree, you 
+pointer, or with regular I2-Type load and store. This section is purely intended to offer stack frame allocation. For any nested function tree, you 
 are bound to use more than 8 values over the course of the program flow. The stack pointer allows you to place all your values into the stack before 
 escaping into another function. But for the majority of your saved values, you would use the third page:
 
