@@ -2,9 +2,9 @@ The most fundamental part of a CPU is the Instruction Set Architecture (ISA). Wh
 this was the first part that needed to be defined. Since I am a CE noob, I decided to pick something I was already familiar with, so I decided to
 have my ISA be inspired by the format of MIPS16. This is the base ISA:
 
-- Instruction Width: 16 bits.
-- Data Width: 8 bits.
-- Address width: 12 bits.
+- Instruction Width: 16 bits
+- Data Width: 8 bits
+- Address width: 12 bits
 
 R-Type:  [ op: 4 bits | Rd: 4 bits | Rx: 4 bits | funct: 4 bits]
 I1-Type: [ op: 4 bits | Rd: 4 bits |         Imm: 8 bits       ]
@@ -35,20 +35,20 @@ registers:
 Accessible Registers
 | Index |  Symbol(s)  |   Purpose   | Width |
 |   0   |  $zero/$0   |  returns 0  | 8 bit |
-|   1   |   $one/$1   |  returns 1  | 8 bit |
-|   2   |     $R0     |  gen. purp. | 8 bit |
-|   3   |     $R1     |  gen. purp. | 8 bit |
-|   4   |     $R2     |  gen. purp. | 8 bit |
-|   5   |     $R3     |  gen. purp. | 8 bit |
-|   6   |     $R4     |  gen. purp. | 8 bit |
-|   7   |     $R5     |  gen. purp. | 8 bit |
-|   8   |     $R6     |  gen. purp. | 8 bit |
-|   9   |     $R7     |  gen. purp. | 8 bit |
-|   10  |     $R8     |  gen. purp. | 8 bit |
-|   11  |     $R9     |  gen. purp. | 8 bit |
-|   12  |     $T0     | Temp I-Type | 8 bit |
-|   13  |     $T1     | Temp I-Type | 8 bit |
-|   14  |     $RA     |   Ret Addr  | 12bit |
+|   1   |     $R0     |  gen purp   | 8 bit |
+|   2   |     $R1     |  gen purp   | 8 bit |
+|   3   |     $R2     |  gen purp   | 8 bit |
+|   4   |     $R3     |  gen purp   | 8 bit |
+|   5   |     $R4     |  gen purp   | 8 bit |
+|   6   |     $R5     |  gen purp   | 8 bit |
+|   7   |     $R6     |  gen purp   | 8 bit |
+|   8   |     $R7     |  gen purp   | 8 bit |
+|   9   |     $T0     | Temp I-Type | 8 bit |
+|   10  |     $T1     | Temp I-Type | 8 bit |
+|   11  |     $A0     |  func para  | 8 bit |
+|   12  |     $A1     |  func para  | 8 bit |
+|   13  |     $A2     |  func para  | 8 bit |
+|   14  |     $V0     |  func ret   | 8 bit |
 |   15  |     $SP     |  Stack Ptr  | 12bit |
 
 Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
@@ -73,8 +73,8 @@ R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 1111  STORE  RAM[Rd] = Rx
 
 I1-Type  opcodes 0001-0110, 6 instructions:
-  0001       MOVI   Rd = $0 + imm8
-  0010       ADDI   Rd = Rd + imm8
+  0001       
+  0010       ADDI   Rd = Rd + imm8 (with MOVI Rd = $0 + imm8 pseudo-instr)
   0011       SUBI   Rd = Rd - imm8
   0100       ANDI   Rd = Rd & imm8
   0101       ORI    Rd = Rd | imm8
@@ -86,12 +86,13 @@ I2-Type  opcodes 0111-1010, 4 instructions:
   1001       STAT0  RAM[addr12] = $T0
   1010       STAT1  RAM[addr12] = $T1
 
-J-Type  opcodes 1011-1111, 5 slots:
-  1011       J      PC = addr12
-  1100       CALL   $LR = PC + 1, PC = addr12
-  1101       JEQ    if zero:     PC = addr12
-  1110       JNE    if !zero:    PC = addr12
-  1111       JLT    if negative: PC = addr12
+J-Type  opcodes 1010-1111, 6 instructions:
+  1010       J      PC = imm12
+  1011       JEQ    if zero:     PC = imm12
+  1100       JNE    if !zero:    PC = imm12
+  1101       JLT    if negative: PC = imm12
+  1110       CALL   Move Value inside PC to hidden Return Stack, and increment Return Stack
+  1111       RET    Move Value inside hidden Return Stack to PC, and decrement Return Stack
 
 So, most of this is pretty self explanatory. But there are more types of instructions than MIPS, which is to get around some architecture 
 challenges, the biggest one being how to move data from the registers to the SRAM modules on the board. The way I am planning on doing 
@@ -128,10 +129,11 @@ as well have a look at it:
                      I2-type only (LDAT0/LDAT1/STAT0/STAT1)
                      Larger data structures that do not need
                      fast register-indirect access
+# Return Space
+0x800 - 0x80F
+0x810 - 0xFEF        Unassigned (reserved for expansion)
 
-0x800 - 0xFEF        Unassigned (reserved for expansion)
-
-# GPU 
+# GPU VRAM
     0xF?? - 0xF??    GPU sprite registers
     0xF?? - 0xFF9    GPU palette registers
 
