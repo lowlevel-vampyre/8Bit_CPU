@@ -120,11 +120,15 @@ as well have a look at it:
 - Includes Memory Mapped IO
 
 # RAM (0x000 - 0x7FF, 2KB SRAM Chip)
-    0x000 - 0x0FF    Zero-page RAM (256 bytes)
-                     R-type LOAD/STORE addressable
-                     Stack lives here ($SP initialized to 0x0FF)
+    0x000 - 0x0FF    Static Stack Page (256 bytes)
+                     Accessible using Register Pointers with R-type LOAD/STORE
+
+    0x100 - 0x1FF    Dynamic Stack Page (256 bytes)
+                     Only accessible using stack pointer with R-Type LOAD/STORE
+                     Stack Pointer is paired to these values by pairing the 9th
+                         bit to 1, turning 0x000 -> 0x100
     
-    0x100 - 0x7FF    Extended RAM (~1.75KB)
+    0x100 - 0x7FF    Extended RAM (~1.5KB)
                      I2-type only (LDAT0/LDAT1/STAT0/STAT1)
                      Larger data structures that do not need
                      fast register-indirect access
