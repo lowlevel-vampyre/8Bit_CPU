@@ -16,11 +16,10 @@ is the biggest difference between ours and MIPS: since MIPS has 3 bits for regis
 allows you to have two source registers and a completely separate destination register for commands like "add a, b, c". I neglected to do this 
 for a few reasons: 
 
-The first is fuck programmers (aka me). Through careful thought and consideration, I decided that the added complexity of 
-creating an architecture that uses three registers at a time is not worth the added convenience of simpler programs. I decide, possibly foolishly,
-that simply having pseudo instructions that do that for you are totally fine. In addition, since we are using CPLD's as the hardware for the CPU,
-execution speed is not an issue, and more instructions are likely to be doable, as I am estimating this could be a 5Mhz CPU in the best case,
-which is plenty fast. 
+Through careful thought and consideration, I decided that the added complexity of  creating an architecture that uses three registers at a time 
+is not worth the added convenience of simpler programs. I decide, possibly foolishly, that simply having pseudo instructions that do that for you 
+are totally fine. In addition, since we are using CPLD's as the hardware for the CPU, execution speed is not an issue, and more instructions are 
+likely to be doable, as I am estimating this could be a 5Mhz CPU in the best case, which is plenty fast. 
 
 Second, having 3 bits register indexing means we have only have 8 registers. While this may be fine, I would prefer to have more registers if 
 game logic execution is the primary job of this CPU. Having a register bit-wdth of 4 ups that to 16 registers, which gives programmers flexibility
@@ -94,13 +93,31 @@ J-Type  opcodes 1011-1111, 5 slots:
   1110       JNE    if !zero:    PC = addr12
   1111       JLT    if negative: PC = addr12
 
-So, most of this is pretty self explanatory. But there are more types of instructions than MIPS, which is to get around some archtecture challenges, 
-the biggest one being how to move data from the registers to the SRAM modules on the board. The way I are planning doing this is by using temp registers.
-The temp registers are special registers that the CPU uses for memory access. If a programmer wanted to read from memory, they would execute a read command to
-an address, then either store that data in a register for later, or use the temp register when making calculations. The I2 instructions will move data to these
-registers, $T0 and $T1, depening on the command. The values will be overwritten when the command is run, but otherwise are perfectly good registers. 
+So, most of this is pretty self explanatory. But there are more types of instructions than MIPS, which is to get around some architecture 
+challenges, the biggest one being how to move data from the registers to the SRAM modules on the board. The way I am planning on doing 
+this is by using temp registers. The temp registers are special registers that the CPU uses for memory access. If a programmer wanted to 
+read from memory, they would execute a read command to an address, then either store that data in a register for later, or use the temp 
+register when making calculations. The I2 instructions will move data to these registers, $T0 and $T1, depening on the command. The 
+values will be overwritten when the command is run, but otherwise are perfectly good registers.
 
-Another important thing to add is the memory map. Since we are limited to a 12-bit address, we can only address 4KB of ram, which has been split up accordingly:
+Another thing to note is the LOAD and STORE instructions inside I1 instructions. You may notice they use an 8-bit IMM width to hold the 
+memory address they want to store in, and that the addressable memory in this ISA is 12-bit. Firstly, I'd just like to say you're very
+observent ;). But yes, this is correct behavior. The immediate address is limited, so the top 256 Bytes are informally designated as
+the "Zero Page". This chunk of bytes are easier to get to thanks to this function. Instead of the two lines of:
+
+  1 LDAT0 0x00F
+  2 MOV $R0, $T0
+
+We simply have:
+
+  1 LOAD $R0, 0x00F
+
+While this isn't a huge performance gain, it definetly reduces the amount of code you need for writes and reads, and when you're writing
+a game loop that has 10-20 saves, the brevity is much appreciated. Now that you are thinking about the address specification, you might
+as well have a look at it:
+
+- 4KB Addressable Memory
+- Includes Memory Mapped IO
 
 # RAM (0x000 - 0x7FF, 2KB SRAM Chip)
     0x000 - 0x0FF    Zero-page RAM (256 bytes)
@@ -113,7 +130,6 @@ Another important thing to add is the memory map. Since we are limited to a 12-b
                      fast register-indirect access
 
 0x800 - 0xFEF        Unassigned (reserved for expansion)
-
 
 # GPU 
     0xF?? - 0xF??    GPU sprite registers
@@ -128,4 +144,4 @@ Another important thing to add is the memory map. Since we are limited to a 12-b
     0xFFD            Controller Joystick Y-Values
     0xFFE            Controller Joystick X-Values
 
-0xFFF            System status / vertical blank flag
+0xFFF            System status / vertical blank flag. 
