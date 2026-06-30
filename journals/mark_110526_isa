@@ -81,8 +81,8 @@ I1-Type  opcodes 0001-0110, 5 instructions:
   0011       ANDI   Rd = Rd & imm8
   0100       ORI    Rd = Rd | imm8
   0101       MOVI   Rd = imm8
-  0110       LOADI  Rd = RAM[imm8]
-  0111       STOREI RAM[imm8] = Rd
+  0110
+  0111
 
 I2-Type  opcodes 1000-1001, 2 instructions:
   1000       LDRAM  $T0 = RAM[addr12]
