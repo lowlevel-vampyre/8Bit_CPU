@@ -99,3 +99,33 @@ the biggest one being how to move data from the registers to the SRAM modules on
 The temp registers are special registers that the CPU uses for memory access. If a programmer wanted to read from memory, they would execute a read command to
 an address, then either store that data in a register for later, or use the temp register when making calculations. The I2 instructions will move data to these
 registers, $T0 and $T1, depening on the command. The values will be overwritten when the command is run, but otherwise are perfectly good registers. 
+
+Another important thing to add is the memory map. Since we are limited to a 12-bit address, we can only address 4KB of ram, which has been split up accordingly:
+
+# RAM (0x000 - 0x7FF, 2KB SRAM Chip)
+    0x000 - 0x0FF    Zero-page RAM (256 bytes)
+                     R-type LOAD/STORE addressable
+                     Stack lives here ($SP initialized to 0x0FF)
+    
+    0x100 - 0x7FF    Extended RAM (~1.75KB)
+                     I2-type only (LDAT0/LDAT1/STAT0/STAT1)
+                     Larger data structures that do not need
+                     fast register-indirect access
+
+0x800 - 0xFEF        Unassigned (reserved for expansion)
+
+
+# GPU 
+    0xF?? - 0xF??    GPU sprite registers
+    0xF?? - 0xFF9    GPU palette registers
+
+# Sound Card
+    0xFFA            AY-3-8910 sound chip address port
+    0xFFB            AY-3-8910 sound chip data port
+
+# Controller MMIO
+    0xFFC            Controller Button Value
+    0xFFD            Controller Joystick Y-Values
+    0xFFE            Controller Joystick X-Values
+
+0xFFF            System status / vertical blank flag
