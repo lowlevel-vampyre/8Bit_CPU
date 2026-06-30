@@ -54,35 +54,37 @@ Accessible Registers
 Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
 I relied on AI and after some back and forth came up with this:
 
+  0000       NOP    skip
+
 R-Type: opcode 0000, funct 4 bits, 16 instructions:
   # Normal R-Type
-  0000 0000  ADD    Rd = Rd + Rx, Sets Carry Flag
-  0000 0001  SUB    Rd = Rd - Rx, Sets Neg or Equal Flag 
-  0000 0010  AND    Rd = Rd & Rx
-  0000 0011  OR     Rd = Rd | Rx
-  0000 0100  XOR    Rd = Rd ^ Rx
-  0000 0101  SLL    Rd = Rd << Rx
-  0000 0110  SRL    Rd = Rd >> Rx
-  0000 0111  MOV    Rd = Rx
+  0001 0000  ADD    Rd = Rd + Rx, Sets Carry Flag
+  0001 0001  SUB    Rd = Rd - Rx, Sets Neg or Equal Flag 
+  0001 0010  AND    Rd = Rd & Rx
+  0001 0011  OR     Rd = Rd | Rx
+  0001 0100  XOR    Rd = Rd ^ Rx
+  0001 0101  SLL    Rd = Rd << Rx
+  0001 0110  SRL    Rd = Rd >> Rx
+  0001 0111  MOV    Rd = Rx
 
   # Pointer R-Type
-  0000 1000  ADD    &Rd = &Rd + Rx, Sets Carry Flag
-  0000 1001  SUB    &Rd = &Rd - Rx, Sets Neg or Equal Flag
-  0000 1010  
-  0000 1011
-  0000 1100  POP    Rd = &Rx, auto decrements the pointer after
-  0000 1101  PUSH   RAM[&Rd] = Rx, auto increments the pointer after
-  0000 1110  LOAD   Rd = &Rx
-  0000 1111  STORE  RAM[&Rd] = Rx
+  0001 1000  ADD    &Rd = &Rd + Rx, Sets Carry Flag
+  0001 1001  SUB    &Rd = &Rd - Rx, Sets Neg or Equal Flag
+  0001 1010  
+  0001 1011
+  0001 1100  POP    Rd = &Rx, auto decrements the pointer after
+  0001 1101  PUSH   RAM[&Rd] = Rx, auto increments the pointer after
+  0001 1110  LOAD   Rd = &Rx
+  0001 1111  STORE  RAM[&Rd] = Rx
 
 I1-Type  opcodes 0001-0110, 5 instructions:
-  0001       ADDI   Rd = Rd + imm8, Sets Carry Flag
-  0010       SUBI   Rd = Rd - imm8, Sets Neg or Equal Flag
-  0011       ANDI   Rd = Rd & imm8
-  0100       ORI    Rd = Rd | imm8
-  0101       MOVI   Rd = imm8
+  0010       ADDI   Rd = Rd + imm8, Sets Carry Flag
+  0011       SUBI   Rd = Rd - imm8, Sets Neg or Equal Flag
+  0100       ANDI   Rd = Rd & imm8
+  0101       ORI    Rd = Rd | imm8
+  0110       
   0110
-  0111
+  0111       MOVI   Rd = imm8
 
 I2-Type  opcodes 1000-1001, 2 instructions:
   1000       LDRAM  $T0 = RAM[addr12]
