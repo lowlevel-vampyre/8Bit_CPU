@@ -73,7 +73,7 @@ R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 1111  STORE  RAM[Rd] = Rx
 
 I1-Type  opcodes 0001-0110, 6 instructions:
-  0001       LDI    Rd = $0 + imm8
+  0001       MOVI   Rd = $0 + imm8
   0010       ADDI   Rd = Rd + imm8
   0011       SUBI   Rd = Rd - imm8
   0100       ANDI   Rd = Rd & imm8
