@@ -1,10 +1,10 @@
 The most fundamental part of a CPU is the Instruction Set Architecture (ISA). When starting our project, aside from bit width and instruction width, 
-this was the first part that needed to be defined. Since I am a CE noob, I decided to pick something I was already familiar with, so I decided to 
-base the ISA off of MIPS16. This is the base ISA:
+this was the first part that needed to be defined. Since I am a CE noob, I decided to pick something I was already familiar with, so I decided to
+have my ISA be inspired by the format of MIPS16. This is the base ISA:
 
-Instruction Width: 16 bits.
-Data Width: 8 bits.
-Address width: 12 bits.
+- Instruction Width: 16 bits.
+- Data Width: 8 bits.
+- Address width: 12 bits.
 
 R-Type:  [ op: 4 bits | Rd: 4 bits | Rx: 4 bits | funct: 4 bits]
 I1-Type: [ op: 4 bits | Rd: 4 bits |         Imm: 8 bits       ]
@@ -45,11 +45,11 @@ Accessible Registers
 |   7   |     $R5     |  gen. purp. | 8 bit |
 |   8   |     $R6     |  gen. purp. | 8 bit |
 |   9   |     $R7     |  gen. purp. | 8 bit |
-|   10  |     $T0     | Temp I-Type | 8 bit |
-|   11  |     $T1     | Temp I-Type | 8 bit |
-|   12  |     $T2     |   scratch   | 8 bit |
-|   13  |     $LR     |   Ret Addr  | 12bit |
-|   14  |     $CR     |  Count Reg  | 12bit |
+|   10  |     $R8     |  gen. purp. | 8 bit |
+|   11  |     $R9     |  gen. purp. | 8 bit |
+|   12  |     $T0     | Temp I-Type | 8 bit |
+|   13  |     $T1     | Temp I-Type | 8 bit |
+|   14  |     $LR     |   Ret Addr  | 12bit |
 |   15  |     $SP     |  Stack Ptr  | 12bit |
 
 Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
@@ -71,10 +71,10 @@ R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0000 1100  MOV    Rd = Rx
   0000 1101  NEG    Rd = -Rx
   0000 1110  LOAD   Rd = RAM[Rx]
-  0000 1111  STORE  RAM[Rx] = Rd
+  0000 1111  STORE  RAM[Rd] = Rx
 
 I1-Type  opcodes 0001-0110, 6 instructions:
-  0001       LDI    Rd = imm8
+  0001       LDI    Rd = $0 + imm8
   0010       ADDI   Rd = Rd + imm8
   0011       SUBI   Rd = Rd - imm8
   0100       ANDI   Rd = Rd & imm8
@@ -82,21 +82,20 @@ I1-Type  opcodes 0001-0110, 6 instructions:
   0110       XORI   Rd = Rd ^ imm8
 
 I2-Type  opcodes 0111-1010, 4 instructions:
-  0111       LDAT0  addr12    load RAM[addr12] into $T0
-  1000       LDAT1  addr12    load RAM[addr12] into $T1
-  1001       STAT0  addr12    store $T0 to RAM[addr12]
-  1010       STAT1  addr12    store $T1 to RAM[addr12]
+  0111       LDAT0  $T0 = RAM[addr12]
+  1000       LDAT1  $T1 = RAM[addr12]
+  1001       STAT0  RAM[addr12] = $T0
+  1010       STAT1  RAM[addr12] = $T1
 
 J-Type  opcodes 1011-1111, 5 slots:
-  1011  J      PC = addr12
-  1100  CALL   $LR = PC + 1, PC = addr12
-  1101  JEQ    if zero: PC = addr12
-  1110  JNE    if !zero: PC = addr12
-  1111  JLT    if negative: PC = addr12
+  1011       J      PC = addr12
+  1100       CALL   $LR = PC + 1, PC = addr12
+  1101       JEQ    if zero:     PC = addr12
+  1110       JNE    if !zero:    PC = addr12
+  1111       JLT    if negative: PC = addr12
 
 So, most of this is pretty self explanatory. But there are more types of instructions than MIPS, which is to get around some archtecture challenges, 
 the biggest one being how to move data from the registers to the SRAM modules on the board. The way I are planning doing this is by using temp registers.
 The temp registers are special registers that the CPU uses for memory access. If a programmer wanted to read from memory, they would execute a read command to
-an address, then either store that data in a register for later, or use the temp register when making calculations. While it is undecided at this moment, I
-could imagine that we would use $T1 for storing data from reads, and $T2 for storing data to SRAM. Regardless, all 3 ($T0, $T1, $T2) act as general purpose scratchpad 
-registers.
+an address, then either store that data in a register for later, or use the temp register when making calculations. The I2 instructions will move data to these
+registers, $T0 and $T1, depening on the command. The values will be overwritten when the command is run, but otherwise are perfectly good registers. 
