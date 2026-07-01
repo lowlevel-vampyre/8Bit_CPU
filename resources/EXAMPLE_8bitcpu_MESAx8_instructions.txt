@@ -1,0 +1,53 @@
+[group 4b][variant 4b]
+
+0x0_ = MISC
+  0x00 = NOP             ; No operation
+  0x01 = HLT             ; Halt CPU execution
+  0x02 = INT             ; Trigger software interrupt
+  0x03 = CLC             ; Clear carry flag
+  0x04 = SEC             ; Set carry flag
+  0x05 = CLI             ; Clear interrupt enable flag (disable interrupts)
+  0x06 = STI             ; Set interrupt enable flag (enable interrupts)
+
+0x1_ = MOV
+  0x10 = reg, reg        ; Copy value from register to register
+  0x11 = reg, [mem]      ; Load value from memory address into register
+  0x12 = [mem], reg      ; Store register value to memory address
+  0x13 = reg, #imm       ; Load immediate value into register
+  0x14 = [mem], [mem]    ; Copy value from memory address to memory address
+  0x15 = [mem], #imm     ; Store immediate value to memory address
+  0x16 = reg, [reg]      ; Load value from address held in register (pointer read)
+  0x17 = [reg], reg      ; Store register value to address held in register (pointer write)
+
+0x2_ = ALU
+  0x20 = ADD             ; Add register to accumulator
+  0x21 = ADC             ; Add register to accumulator with carry
+  0x22 = SUB             ; Subtract register from accumulator
+  0x23 = SBB             ; Subtract register from accumulator with borrow
+  0x24 = AND             ; Bitwise AND with accumulator
+  0x25 = OR              ; Bitwise OR with accumulator
+  0x26 = XOR             ; Bitwise XOR with accumulator
+  0x27 = NOT             ; Bitwise NOT of accumulator
+  0x28 = CMP             ; Compare (subtract without storing result, sets flags only)
+  0x29 = INC             ; Increment register by 1
+  0x2A = DEC             ; Decrement register by 1
+  0x2B = SHL             ; Shift left, MSB goes to carry, LSB set to 0
+  0x2C = SHR             ; Shift right, LSB goes to carry, MSB set to 0
+  0x2D = ROL             ; Rotate left through carry, MSB goes to carry, carry goes to LSB
+  0x2E = ROR             ; Rotate right through carry, LSB goes to carry, carry goes to MSB
+
+0x3_ = JUMP
+  0x30 = JMP             ; Unconditional jump to address
+  0x31 = JZ              ; Jump if zero flag set
+  0x32 = JNZ             ; Jump if zero flag clear
+  0x33 = JC              ; Jump if carry flag set
+  0x34 = JNC             ; Jump if carry flag clear
+  0x35 = JS              ; Jump if sign flag set (result negative)
+  0x36 = JO              ; Jump if overflow flag set
+
+0x4_ = STACK/CALL
+  0x40 = PUSH            ; Push register onto stack, decrement SP
+  0x41 = POP             ; Pop value from stack into register, increment SP
+  0x42 = CALL            ; Push PC onto stack, jump to address
+  0x43 = RET             ; Pop PC from stack, return to caller
+  0x44 = IRET            ; Pop PC and flags from stack, return from interrupt handler
