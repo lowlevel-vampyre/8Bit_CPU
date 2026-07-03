@@ -65,7 +65,7 @@ R-Type: opcode 0001, funct 4 bits, 16 instructions:
   0001 0100  XOR    Rd = Rd ^ Rx
   0001 0101  SLL    Rd = Rd << Rx
   0001 0110  SRL    Rd = Rd >> Rx
-  0001 0111  MUL    Rd = Upper 8 Bits of Rd * Rx 
+  0001 0111  
   0001 1000  CMP    Rd - Rx, Sets flags based on result
   0001 1001  MOV    Rd = Rx
 
