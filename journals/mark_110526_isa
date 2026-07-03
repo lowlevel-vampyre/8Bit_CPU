@@ -51,8 +51,8 @@ Accessible Registers
 |   14  |     $V0     |  func ret   | 8 bit |
 |   15  |     $SP     |  Stack Ptr  | 8 bit |
 
-Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
-I relied on AI and after some back and forth came up with this:
+
+Instructions:
 
   0000       NOP    skip
 
