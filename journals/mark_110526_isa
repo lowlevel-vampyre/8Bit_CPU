@@ -44,12 +44,12 @@ Accessible Registers
 |   7   |     $R5     |  gen purp   | 8 bit |
 |   8   |     $R6     |  gen purp   | 8 bit |
 |   9   |     $R7     |  gen purp   | 8 bit |
-|   10  |     $T0     | Temp I-Type | 8 bit |
+|   10  |    $XFER    |  Trans Reg  | 8 bit |
 |   11  |     $A0     |  func para  | 8 bit |
 |   12  |     $A1     |  func para  | 8 bit |
 |   13  |     $A2     |  func para  | 8 bit |
 |   14  |     $V0     |  func ret   | 8 bit |
-|   15  |     $SP     |  Stack Ptr  | 12bit |
+|   15  |     $SP     |  Stack Ptr  | 8 bit |
 
 Now, to understand the whole setup you will need to understand how I am planning on using the opcodes. Since I low key don't know anything, 
 I relied on AI and after some back and forth came up with this:
@@ -68,27 +68,26 @@ R-Type: opcode 0000, funct 4 bits, 16 instructions:
   0001 0111  MOV    Rd = Rx
 
   # Pointer R-Type
-  0001 1000  ADD    &Rd = &Rd + Rx, Sets Carry Flag
-  0001 1001  SUB    &Rd = &Rd - Rx, Sets Neg or Equal Flag
-  0001 1010  
-  0001 1011
+  0001 1000  ADD    RAM[Rd] = RAM[Rd] + Rx, Sets Carry Flag
+  0001 1001  SUB    RAM[Rd] = RAM[Rd] - Rx, Sets Neg or Equal Flag
+  0001 1010  AND    RAM[Rd] = RAM[Rd] & Rx
+  0001 1011  OR     RAM[Rd] = RAM[Rd] | Rx
   0001 1100  POP    Rd = &Rx, auto decrements the pointer after
-  0001 1101  PUSH   RAM[&Rd] = Rx, auto increments the pointer after
+  0001 1101  PUSH   RAM[Rd] = Rx, auto increments the pointer after
   0001 1110  LOAD   Rd = &Rx
-  0001 1111  STORE  RAM[&Rd] = Rx
+  0001 1111  STORE  RAM[Rd] = Rx
 
-I1-Type  opcodes 0001-0110, 5 instructions:
+I1-Type  opcodes 0010-0110, 5 instructions:
   0010       ADDI   Rd = Rd + imm8, Sets Carry Flag
   0011       SUBI   Rd = Rd - imm8, Sets Neg or Equal Flag
-  0100       ANDI   Rd = Rd & imm8
-  0101       ORI    Rd = Rd | imm8
-  0110       
-  0110
-  0111       MOVI   Rd = imm8
+  0100       ADDI   RAM[Rd] = RAM[Rd] + imm8, Sets Carry Flag
+  0101       SUBI   RAM[Rd] = RAM[Rd] - imm8, Sets Neg or Equal Flag
+  0110       MOVI   Rd = imm8
+  0111       MOVI   RAM[Rd] = imm8
 
 I2-Type  opcodes 1000-1001, 2 instructions:
-  1000       LDRAM  $T0 = RAM[addr12]
-  1001       STRAM  RAM[addr12] = $T0
+  1000       LDRAM  $XFER = RAM[addr12]
+  1001       STRAM  RAM[addr12] = $XFER
 
 J-Type  opcodes 1010-1111, 6 instructions:
   1010       J      PC = imm12
