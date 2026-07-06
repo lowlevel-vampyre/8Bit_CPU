@@ -68,13 +68,13 @@ R-Type: opcode 0001, funct 4 bits, 16 instructions:
   0001 0111  SRL    Rd = Rd >> Rx
   0001 1000  CMP    Rd - Rx, Sets flags based on result
   0001 1001  MOV    Rd = Rx
+  0001 1010  
+  0001 1011  
 
   # Pointer R-Type
-  0001 1010  ADD    RAM[Rd] = RAM[Rd] + Rx, Sets Carry Flag
-  0001 1011  SUB    RAM[Rd] = RAM[Rd] - Rx, Sets Neg and Equal Flag
-  0001 1100  PUSH   RAM[Rd] = Rx, auto increments the pointer after
-  0001 1101  STORE  RAM[Rd] = Rx
-  0001 1110  POP    Rd = RAM[Rx], auto decrements the pointer after
+  0001 1100  ADD    RAM[Rd] = RAM[Rd] + Rx, Sets Carry Flag
+  0001 1101  SUB    RAM[Rd] = RAM[Rd] - Rx, Sets Neg and Equal Flag
+  0001 1110  STORE  RAM[Rd] = Rx
   0001 1111  LOAD   Rd = RAM[Rx]
 
 I1-Type  opcodes 0010-0111, 6 instructions:
