@@ -83,7 +83,7 @@ I1-Type  opcodes 0010-0111, 6 instructions:
   0100       ADDI&  RAM[Rd] = RAM[Rd] + imm8, Sets Carry Flag
   0101       SUBI&  RAM[Rd] = RAM[Rd] - imm8, Sets Neg and Equal Flag
   0110       MOVI   Rd = imm8
-  0111       MOVI   RAM[Rd] = imm8
+  0111       MOVI&  RAM[Rd] = imm8
 
 I2-Type  opcodes 1000-1001, 2 instructions:
   1000       LDRAM  $XFER = RAM[addr12]
