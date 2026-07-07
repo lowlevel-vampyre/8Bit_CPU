@@ -72,8 +72,8 @@ R-Type: opcode 0001, funct 4 bits, 16 instructions:
   0001 1011  
 
   # Pointer R-Type
-  0001 1100  ADD&    RAM[Rd] = RAM[Rd] + Rx, Sets Carry Flag
-  0001 1101  SUB&    RAM[Rd] = RAM[Rd] - Rx, Sets Neg and Equal Flag
+  0001 1100  ADD&   RAM[Rd] = RAM[Rd] + Rx, Sets Carry Flag
+  0001 1101  SUB&   RAM[Rd] = RAM[Rd] - Rx, Sets Neg and Equal Flag
   0001 1110  STORE  RAM[Rd] = Rx
   0001 1111  LOAD   Rd = RAM[Rx]
 
