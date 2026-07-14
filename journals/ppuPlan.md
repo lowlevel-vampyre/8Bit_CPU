@@ -17,7 +17,8 @@ These are architected like so:
 - CPU Addressable
 - Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
   into 32 horizontal tiles, and 30 vertical ones. The PPU uses this to determine what pixels it should write to the screen. Since the tiles
-  directly map to the display, the H and V counters control the addressing to the Image Buffer
+  directly map to the display, the H and V counters control the addressing to the Image Buffer. The CPU will most likely fill this once,
+  and make minor changes if there are any updates (like a new level or something else)
 ---
 ##### Object Attribute Memory (OAM)
 - 16 bytes
@@ -25,7 +26,8 @@ These are architected like so:
 - This is a special chunk of memory that the PPU uses to determine if a sprite occupies this tile. The 16 bytes represent 4 sprites, each
   with 4 bytes denoting x-pos, y-pos, unused, and sprite ID. The unused spot is possibly for rotations, transforms, or other math. I am 
   not sure yet. The Sprite ID corresponds to a address in the Image Buffer. It does not have enough space for all available sprites, so
-  while this computer supports up to 16 sprites per game, there can only be 4 sprites on screen at a time
+  while this computer supports up to 16 sprites per game, there can only be 4 sprites on screen at a time. This is where the CPU keeps
+  track of player and mob data
 ---
 ##### Image Buffer
 - 2560 Bytes
