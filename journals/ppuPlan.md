@@ -43,6 +43,7 @@ These are architected like so:
   be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
 ---
 
+
 The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from some of CPU addressable portions of memory,
 which is only the 16-bytes of OAM and the 16-bytes for colors, into super fast registers. This means the any updates to memory that the PPU
 accesses will be see during the next frame.
