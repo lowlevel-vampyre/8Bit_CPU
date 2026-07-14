@@ -10,14 +10,14 @@ vertical pixel. The data to print for each pixel will be supplied by a combinati
 the 4-sprite OAM (Object Attribute Memory), a 2560-byte Image Buffer (80 images at 16 bytes per image), and finally a 4-Byte Color Buffer
 
 These are architected like so:
-
+---
 ##### Tile Map
 - 960 Bytes
 - CPU Addressable
 - Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
   into 32 horizontal tiles, and 30 vertical ones. The PPU uses this to determine what pixels it should write to the screen. Since the tiles
   directly map to the display, the H and V counters control the addressing to the Image Buffer
-
+---
 ##### Object Attribute Memory (OAM)
 - 16 bytes
 - CPU Addressable
@@ -25,7 +25,7 @@ These are architected like so:
   with 4 bytes denoting x-pos, y-pos, unused, and sprite ID. The unused spot is possibly for rotations, transforms, or other math. I am 
   not sure yet. The Sprite ID corresponds to a address in the Image Buffer. It does not have enough space for all available sprites, so
   while this computer supports up to 16 sprites per game, there can only be 4 sprites on screen at a time
-
+---
 ##### Image Buffer
 - 2560 Bytes
 - Private Programmable ROM (Not CPU Addressable)
@@ -33,7 +33,7 @@ These are architected like so:
   512 bytes are for sprites. Each image is 8x8 pixels, and each pixel uses 4-bits for color, so each byte in this memory file corresponds 
   to 2 pixels. This allows a maximum 64 tiles and 16 sprites, at 32 Bytes per image. The 4-bit color is mapped to the 16 colors in the 
   color buffer, allowing minor effects, like color shifting or flashing.
-
+---
 ##### Color Buffer
 - 16 bytes
 - CPU Addressable
