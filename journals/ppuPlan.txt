@@ -1,0 +1,24 @@
+### Graphics Outline
+
+The CPU is only half of the battle for this project. The other half is the graphics. For this project, a playable game is important,
+meaning we have to be able to control a display. This is my idea, which is subject to change, about how we will go about this.
+
+The first thing to note is what kind of communication we plan to use. Because of simplicity, and the large amount of present documentation,
+the VGA protocol is what we are targeting. This makes it easy for our GPU to output pixel data on a timer to the display (though I will say,
+we are not using a framebuffer). This will be controlled by two timers in the GPU, one for the horizontal pixel, and the other for the
+vertical pixel. The data to print for each pixel will be supplied by a combination of these modules: a 960-byte Tile Map (32 * 30 tiles), 
+the 4-sprite OAM (Object Attribute Memory), a 256-byte Sprite Buffer (16 8x8 sprites), and a 1kb Tile Buffer.
+
+These are architected like so:
+
+##### Tile Map
+- 960 Bytes
+- CPU Addressable
+- Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
+  into 32 horizontal tiles, and 30 vertical ones. The PPU uses this to determine what pixels it should write to the screen. Since the tiles
+  direct
+
+
+
+The way I plan this to work is this. For each pixel, the PPU compares it's position to the 4 sprite registers. If there is an overlap, then
+the PPU grabs its pixel data from the value in the sprite buffer. Otherwise, it checks the 1kb of VRAM 
