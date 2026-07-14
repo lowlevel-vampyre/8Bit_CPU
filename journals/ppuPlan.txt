@@ -42,11 +42,16 @@ These are architected like so:
   be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
 
 
-The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from the CPU addressable portions of memory,
-which is the 16-bytes of OAM and the 16 bytes for colors, into super fast registers.
+The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from some of CPU addressable portions of memory,
+which is only the 16-bytes of OAM and the 16-bytes for colors, into super fast registers. This means the any updates to memory that the PPU
+accesses will be see during the next frame.
 
 For each screen tile, it checks the Tile Map for the particular tile it is currently on. Since each tile is sorted into an 8x8 grid, and 
 each pixel is 4-bits of color, we will have to split each byte in half. For each screen pixel, the pixel address only ticks every other
 clock cycle. And for each pixel in, if the horizontal counter is odd, we grab the high 4-bits. If it is even, we grab the low 4-bits. The
 pixel data is output to the Pixel Comparator, which checks if the pixel should be shown, or if a sprite pixel should be shown instead. Then
 that data goes into the address port of the color register, which outputs 8-bit data to the display, giving a pixel!
+
+The CPU has info about where the PPU is at via memory that the CPU can read from. Two bytes report where the PPU is at. One is a byte
+representing the current horizontal tile index, and one representing the vertical counter (excluding H-Blank and V-Blank). Another is 
+a pseudo-status register, that holds if the PPU is in V-Blank, H-Blank, and also a bit to tell if the frame is odd or even. 
