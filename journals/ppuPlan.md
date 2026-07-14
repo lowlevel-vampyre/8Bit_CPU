@@ -41,7 +41,7 @@ These are architected like so:
 - This is a special chunk of memory that the PPU uses to determine the color to display. Here, full 8-bit colors are used. Theoretically, this
   implementation allows 256 colors... just only using 16 at a time XD. However, having this file be CPU Addressable means cool effects could
   be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
-
+---
 
 The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from some of CPU addressable portions of memory,
 which is only the 16-bytes of OAM and the 16-bytes for colors, into super fast registers. This means the any updates to memory that the PPU
