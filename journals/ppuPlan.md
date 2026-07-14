@@ -1,4 +1,4 @@
-### Graphics Outline
+# Graphics Outline
 
 The CPU is only half of the battle for this project. The other half is the graphics. For this project, a playable game is important,
 meaning we have to be able to control a display. This is my idea, which is subject to change, about how we will go about this.
