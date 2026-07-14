@@ -23,24 +23,41 @@ These are architected like so:
 - CPU Addressable
 - This is a special chunk of memory that the PPU uses to determine if a sprite occupies this tile. The 16 bytes represent 4 sprites, each
   with 4 bytes denoting x-pos, y-pos, unused, and sprite ID. The unused spot is possibly for rotations, transforms, or other math. I am 
-  not sure yet. The Sprite ID corresponds to a address in the Image Buffer
+  not sure yet. The Sprite ID corresponds to a address in the Image Buffer. It does not have enough space for all available sprites, so
+  while this computer supports up to 16 sprites per game, there can only be 4 sprites on screen at a time
 
-##### Sprite and Tile Buffer
-- 1280 Bytes
+##### Image Buffer
+- 2,560 Bytes
 - Private Programmable ROM (Not CPU Addressable)
 - This buffer stores the pixel data for each sprite and tile. It is split up where the first 1024 bytes are for tiles, and the remaining
-  256 bytes are for sprites. Each image is 8x8 pixels, and each pixel uses 2-bits for color, so each byte in this memory file corresponds 
-  to 4 pixels. This allows a maximum 64 tiles and 16 sprites, and 16 Bytes per image. The 2-bit color is mapped to the 4 bytes of color in color buffer, allowing minor effects, like color shifting, or flashing.
-
+  256 bytes are for sprites. Each image is 8x8 pixels, and each pixel uses 4-bits for color, so each byte in this memory file corresponds 
+  to 2 pixels. This allows a maximum 64 tiles and 16 sprites, at 32 Bytes per image. The 4-bit color is mapped to the 16 colors in the 
+  color buffer, allowing minor effects, like color shifting or flashing.
 
 ##### Color Buffer
-- 4 bytes
+- 16 bytes
 - CPU Addressable
 - This is a special chunk of memory that the PPU uses to determine the color to display. Here, full 8 colors are used. Theoretically, this
-  implementation allows 256 colors... just only using 4 at a time XD. However, having this file be CPU Addressable means cool effects could
+  implementation allows 256 colors... just only using 16 at a time XD. However, having this file be CPU Addressable means cool effects could
   be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
 
 
-The way I plan this to work is this. For each pixel, the PPU compares it's position to the 4 sprite registers. If there is an overlap, then
-the PPU grabs its pixel data from the value in the sprite buffer. Otherwise, it checks instead checks the Tile Buffer for which tile to 
+The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from the CPU addressable portions of memory
+into super fast registers, 
+For each screen tile, it checks the Tile Map for the particular tile it is currently on. Since each 
+tile is sorted into an 8x8 grid, and each pixel is 4-bits of color, we know that each horizontal line is 32 bits, or 4 bytes. The PPU then
+grabs those 4-bytes and puts them into the pixel shift register. Then for each pixel in the line of the tile, it checks if that pixel is
+covered by a sprite. If so, it draws the sprite pixel, otherwise drawing the tile pixel. When the PPU "draws" a pixel, it puts the color
+address through the color buffer, which the outputs that to the screen.
+
+Then, for each pixel in this horizontal line of the tile, it checks if part
+of a sprite overlaps this pixel. If so, draw 
+
+
 draw. Each tile is mapped to one of the 960 tiles on the screen
+
+
+the PPU compares it's position to the 4 sprite registers in the OAM. If there is an
+overlap, it draws a sprite
+
+sprite or tile, it uses this on the Image Buffer
