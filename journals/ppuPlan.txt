@@ -7,7 +7,7 @@ The first thing to note is what kind of communication we plan to use. Because of
 the VGA protocol is what we are targeting. This makes it easy for our GPU to output pixel data on a timer to the display (though I will say,
 we are not using a framebuffer). This will be controlled by two timers in the GPU, one for the horizontal pixel, and the other for the
 vertical pixel. The data to print for each pixel will be supplied by a combination of these modules: a 960-byte Tile Map (32 * 30 tiles), 
-the 4-sprite OAM (Object Attribute Memory), a 256-byte Sprite Buffer (16 8x8 sprites), a 1kb Tile Buffer, and finally a 4-Byte Color Buffer
+the 4-sprite OAM (Object Attribute Memory), a 1280-byte Image Buffer (80 images at 16 bytes per image), and finally a 4-Byte Color Buffer
 
 These are architected like so:
 
@@ -16,34 +16,31 @@ These are architected like so:
 - CPU Addressable
 - Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
   into 32 horizontal tiles, and 30 vertical ones. The PPU uses this to determine what pixels it should write to the screen. Since the tiles
-  directly map to the display, the H and V counters control the addressing.
+  directly map to the display, the H and V counters control the addressing to the Image Buffer
 
 ##### Object Attribute Memory (OAM)
 - 16 bytes
 - CPU Addressable
 - This is a special chunk of memory that the PPU uses to determine if a sprite occupies this tile. The 16 bytes represent 4 sprites, each
   with 4 bytes denoting x-pos, y-pos, unused, and sprite ID. The unused spot is possibly for rotations, transforms, or other math. I am 
-  not sure yet. The Sprite ID corresponds to a address in the Sprite Buffer
+  not sure yet. The Sprite ID corresponds to a address in the Image Buffer
 
-##### Sprite Buffer
-- 256 Bytes
+##### Sprite and Tile Buffer
+- 1280 Bytes
 - Private Programmable ROM (Not CPU Addressable)
-- This buffer stores the pixel data for each sprite. Each sprite is 8x8 pixels, and each pixel uses 2-bits for color, so each byte in this 
-  memory file corresponds to 4 pixels. For a 16 sprites, that gives a total size of 256-bytes of sprite data, or 16 Bytes per sprite. The 
-  2-bit color is mapped to the 4 bytes of color in color buffer, allowing minor effects, like color shifting, or flashing.
+- This buffer stores the pixel data for each sprite and tile. It is split up where the first 1024 bytes are for tiles, and the remaining
+  256 bytes are for sprites. Each image is 8x8 pixels, and each pixel uses 2-bits for color, so each byte in this memory file corresponds 
+  to 4 pixels. This allows a maximum 64 tiles and 16 sprites, and 16 Bytes per image. The 2-bit color is mapped to the 4 bytes of color in color buffer, allowing minor effects, like color shifting, or flashing.
 
-##### Tile Buffer
-- 1024 Bytes
-- Private Programmable ROM (Not CPU Addressable)
-- This memory file is nearly identical to the Sprite Buffer. It stores the pixel data for each Tile. Each Tile is 8x8 pixels, and each 
-  pixel uses 2-bits for color. For a 64 tiles, that gives a total size of 1024-bytes of sprite data, which is 16 Bytes per Tile. The 
-  2-bit color is mapped to the 4 bytes of color in color buffer.
 
 ##### Color Buffer
 - 4 bytes
 - CPU Addressable
-- This is a special chunk of memory that the PPU uses to determine the color to print. Here, full 8 colors are used. Theoretically, this
+- This is a special chunk of memory that the PPU uses to determine the color to display. Here, full 8 colors are used. Theoretically, this
   implementation allows 256 colors... just only using 4 at a time XD. However, having this file be CPU Addressable means cool effects could
-  be implemented, like flashing screen when a game is won, Color shifts when 
+  be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
+
+
 The way I plan this to work is this. For each pixel, the PPU compares it's position to the 4 sprite registers. If there is an overlap, then
-the PPU grabs its pixel data from the value in the sprite buffer. Otherwise, it checks the 1kb of VRAM 
+the PPU grabs its pixel data from the value in the sprite buffer. Otherwise, it checks instead checks the Tile Buffer for which tile to 
+draw. Each tile is mapped to one of the 960 tiles on the screen
