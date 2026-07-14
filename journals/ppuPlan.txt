@@ -7,7 +7,7 @@ The first thing to note is what kind of communication we plan to use. Because of
 the VGA protocol is what we are targeting. This makes it easy for our GPU to output pixel data on a timer to the display (though I will say,
 we are not using a framebuffer). This will be controlled by two timers in the GPU, one for the horizontal pixel, and the other for the
 vertical pixel. The data to print for each pixel will be supplied by a combination of these modules: a 960-byte Tile Map (32 * 30 tiles), 
-the 4-sprite OAM (Object Attribute Memory), a 1280-byte Image Buffer (80 images at 16 bytes per image), and finally a 4-Byte Color Buffer
+the 4-sprite OAM (Object Attribute Memory), a 2560-byte Image Buffer (80 images at 16 bytes per image), and finally a 4-Byte Color Buffer
 
 These are architected like so:
 
@@ -27,37 +27,26 @@ These are architected like so:
   while this computer supports up to 16 sprites per game, there can only be 4 sprites on screen at a time
 
 ##### Image Buffer
-- 2,560 Bytes
+- 2560 Bytes
 - Private Programmable ROM (Not CPU Addressable)
-- This buffer stores the pixel data for each sprite and tile. It is split up where the first 1024 bytes are for tiles, and the remaining
-  256 bytes are for sprites. Each image is 8x8 pixels, and each pixel uses 4-bits for color, so each byte in this memory file corresponds 
+- This buffer stores the pixel data for each sprite and tile. It is split up where the first 2048 bytes are for tiles, and the remaining
+  512 bytes are for sprites. Each image is 8x8 pixels, and each pixel uses 4-bits for color, so each byte in this memory file corresponds 
   to 2 pixels. This allows a maximum 64 tiles and 16 sprites, at 32 Bytes per image. The 4-bit color is mapped to the 16 colors in the 
   color buffer, allowing minor effects, like color shifting or flashing.
 
 ##### Color Buffer
 - 16 bytes
 - CPU Addressable
-- This is a special chunk of memory that the PPU uses to determine the color to display. Here, full 8 colors are used. Theoretically, this
+- This is a special chunk of memory that the PPU uses to determine the color to display. Here, full 8-bit colors are used. Theoretically, this
   implementation allows 256 colors... just only using 16 at a time XD. However, having this file be CPU Addressable means cool effects could
   be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
 
 
-The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from the CPU addressable portions of memory
-into super fast registers, 
-For each screen tile, it checks the Tile Map for the particular tile it is currently on. Since each 
-tile is sorted into an 8x8 grid, and each pixel is 4-bits of color, we know that each horizontal line is 32 bits, or 4 bytes. The PPU then
-grabs those 4-bytes and puts them into the pixel shift register. Then for each pixel in the line of the tile, it checks if that pixel is
-covered by a sprite. If so, it draws the sprite pixel, otherwise drawing the tile pixel. When the PPU "draws" a pixel, it puts the color
-address through the color buffer, which the outputs that to the screen.
+The way I plan this to work is this. At the end of a frame during V-Blank, the PPU copies data from the CPU addressable portions of memory,
+which is the 16-bytes of OAM and the 16 bytes for colors, into super fast registers.
 
-Then, for each pixel in this horizontal line of the tile, it checks if part
-of a sprite overlaps this pixel. If so, draw 
-
-
-draw. Each tile is mapped to one of the 960 tiles on the screen
-
-
-the PPU compares it's position to the 4 sprite registers in the OAM. If there is an
-overlap, it draws a sprite
-
-sprite or tile, it uses this on the Image Buffer
+For each screen tile, it checks the Tile Map for the particular tile it is currently on. Since each tile is sorted into an 8x8 grid, and 
+each pixel is 4-bits of color, we know that each horizontal line is 32 bits, or 4 bytes. The PPU then grabs those 4-bytes and puts them 
+into the pixel shift register. Then for each pixel in the line of the tile, it checks if that pixel is covered by a sprite. If so, it 
+draws the sprite pixel, otherwise drawing the tile pixel. When the PPU "draws" a pixel, it puts the color address through the color 
+buffer, which the outputs that to the screen.
