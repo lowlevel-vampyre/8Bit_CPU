@@ -10,6 +10,7 @@ vertical pixel. The data to print for each pixel will be supplied by a combinati
 the 4-sprite OAM (Object Attribute Memory), a 2560-byte Image Buffer (80 images at 16 bytes per image), and finally a 4-Byte Color Buffer
 
 These are architected like so:
+
 ---
 ##### Tile Map
 - 960 Bytes
