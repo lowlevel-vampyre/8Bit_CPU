@@ -14,7 +14,7 @@ These are architected like so:
 ---
 ##### Tile Map
 - 1200 Bytes
-- System RAM
+- System RAM (0x800 - CAF)
 - Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
   into 40 horizontal tiles, and 30 vertical ones. This is purely to match the VGA resolution of 640x480. Using the 8-bits per tile line,
   the final resolution works out to 320x240, which is half the resolution, making it easy to matchup the pixel. The PPU uses this to
@@ -24,7 +24,7 @@ These are architected like so:
 ---
 ##### Object Attribute Memory (OAM)
 - 16 bytes
-- System RAM
+- System RAM (0xCB0- CBF)
 - This is a special chunk of memory that the PPU uses to determine if a sprite occupies this tile. The 16 bytes represent 4 sprites, each
   with 4 bytes denoting x-pos, y-pos, unused, and sprite ID. The unused spot is possibly for rotations, transforms, or other math. I am 
   not sure yet. The Sprite ID corresponds to a address in the Image Buffer. It does not have enough space for all available sprites, so
@@ -41,7 +41,7 @@ These are architected like so:
 ---
 ##### Color Buffer
 - 16 bytes
-- CPU Addressable
+- System RAM (0xCC0- CCF)
 - This is a special chunk of memory that the PPU uses to determine the color to display. Here, full 8-bit colors are used. Theoretically, this
   implementation allows 256 colors... just only using 16 at a time XD. However, having this file be CPU Addressable means cool effects could
   be implemented, like flashing screen when a game is won, color-shifts for "night mode" or "super-duper hard mode", or whatever else. 
