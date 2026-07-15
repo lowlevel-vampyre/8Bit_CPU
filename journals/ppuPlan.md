@@ -58,6 +58,24 @@ clock cycle. And for each pixel in, if the horizontal counter is odd, we grab th
 pixel data is output to the Pixel Comparator, which checks if the pixel should be shown, or if a sprite pixel should be shown instead. Then
 that data goes into the address port of the color register, which outputs 8-bit data to the display, giving a pixel!
 
+For future reference, sprite pixels are calculated differently than regular tiles. Because each tile image is mapped to a particular tile on
+the screen, we can easily use the bottom 8-bits of our pixel location to index the x & y bits for each 8x8 image. However, sprites are not
+constrained in this way, and require more work to interpret which pixels to display. When the pixel comparator computes whether a pixel is on
+a sprite, it does a subtraction calculation: Pixel Location - Sprite Location (the sprite location in this case is the pixel at the top left 
+of the sprites image). If this difference is inclusively between 0 and 7, we have an overlap! But instead of throwing this data away, we hold 
+the difference for x & y, and pass that directly into the XPixel and YPixel values in our Sprite Buffer. Let me explain further why this is the
+case. Say our location pixel on our sprite overlapped with the current pixel. In that case, the difference is 0, so we pass zero into our buffer, 
+since what we want to do is print that top left pixel. If instead the x difference is 0 but the y difference is 7, we want to print the bottom 
+left pixel. You can now see how the difference corresponds to each pixel.
+
+Another thing you might be thinking about is how exactly to index each pixel individually. Since we are storing two pixels in a byte, we can't
+actually do that, we would have to split them apart after the fact. But still, we have 4 bytes per line: how do we know which bytes to select?
+Well, my idea is that since each line is 8 pixels, the binary number system is on our side. If we already know which x pixel and each y pixel
+on a image, we can easily concatonate these to make a full index. Want to access the 8th pixel (x = 0b111) on the 3rd line (y = 0b010)? Well, 
+we take the first take the upper 2 bits of the x-value (0b11 = '3') and the full y-value (0b010 = 2), and we put those values togethor 
+(0b01011 = '11') to get the 12th byte, which contains the 23rd and 24th pixel. Then, we use the bottom bit of our x-value (0b1 = 1) to select
+between the upper and lower 4-bits of the byte. Hooray, we finally have a usable pixel!
+
 The CPU has info about where the PPU is at via memory that the CPU can read from. Two bytes report where the PPU is at. One is a byte
 representing the current horizontal tile index, and one representing the vertical counter (excluding H-Blank and V-Blank). Another is 
 a pseudo-status register, that holds if the PPU is in V-Blank, H-Blank, and also a bit to tell if the frame is odd or even. 
