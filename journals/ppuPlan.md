@@ -76,6 +76,10 @@ we take the first take the upper 2 bits of the x-value (0b11 = '3') and the full
 (0b01011 = '11') to get the 12th byte, which contains the 23rd and 24th pixel. Then, we use the bottom bit of our x-value (0b1 = 1) to select
 between the upper and lower 4-bits of the byte. Hooray, we finally have a usable pixel!
 
+Once we have the 4-bits for color, we will put this into a temporary register to index the color registers on the next pixel. Since we are not
+actually calculating the current pixel, but instead the next one, we need to hold that pixel for the duration of the pixel clock. So on each 
+clock cycle, the temporary register gets the pixel data we calculated, and uses that to index the color register, which outputs to the display.
+
 The CPU has info about where the PPU is at via memory that the CPU can read from. Two bytes report where the PPU is at. One is a byte
 representing the current horizontal tile index, and one representing the vertical counter (excluding H-Blank and V-Blank). Another is 
 a pseudo-status register, that holds if the PPU is in V-Blank, H-Blank, and also a bit to tell if the frame is odd or even. 
