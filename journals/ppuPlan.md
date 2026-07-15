@@ -71,8 +71,8 @@ left pixel. You can now see how the difference corresponds to each pixel.
 Another thing you might be thinking about is how exactly to index each pixel individually. Since we are storing two pixels in a byte, we can't
 actually do that, we would have to split them apart after the fact. But still, we have 4 bytes per line: how do we know which bytes to select?
 Well, my idea is that since each line is 8 pixels, the binary number system is on our side. If we already know which x pixel and each y pixel
-on a image, we can easily concatonate these to make a full index. Want to access the 8th pixel (x = 0b111) on the 3rd line (y = 0b010)? Well, 
-we take the first take the upper 2 bits of the x-value (0b11 = '3') and the full y-value (0b010 = 2), and we put those values togethor 
+on a image, we can easily concatenate these to make a full index. Want to access the 8th pixel (x = 0b111) on the 3rd line (y = 0b010)? Well, 
+we take the first take the upper 2 bits of the x-value (0b11 = '3') and the full y-value (0b010 = 2), and we put those values together 
 (0b01011 = '11') to get the 12th byte, which contains the 23rd and 24th pixel. Then, we use the bottom bit of our x-value (0b1 = 1) to select
 between the upper and lower 4-bits of the byte. Hooray, we finally have a usable pixel!
 
