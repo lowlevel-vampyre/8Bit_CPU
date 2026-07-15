@@ -13,12 +13,14 @@ These are architected like so:
 
 ---
 ##### Tile Map
-- 960 Bytes
+- 1200 Bytes
 - CPU Addressable
 - Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
-  into 32 horizontal tiles, and 30 vertical ones. The PPU uses this to determine what pixels it should write to the screen. Since the tiles
-  directly map to the display, the H and V counters control the addressing to the Image Buffer. The CPU will most likely fill this once,
-  and make minor changes if there are any updates (like a new level or something else)
+  into 40 horizontal tiles, and 30 vertical ones. This is purely to match the VGA resolution of 640x480. Using the 8-bits per tile line,
+  the final resolution works out to 320x240, which is half the resolution, making it easy to matchup the pixel. The PPU uses this to
+  determine what pixels it should write to the screen. Since the tiles directly map to the display, the H and V counters control the
+  addressing to the Image Buffer. The CPU will most likely fill this once, and make minor changes if there are any updates (like a new
+  level or something else)
 ---
 ##### Object Attribute Memory (OAM)
 - 16 bytes
