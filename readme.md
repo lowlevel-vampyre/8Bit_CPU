@@ -18,7 +18,7 @@ Trello: https://trello.com/invite/b/6a033a25e39493d68ccb1311/ATTIa34ab2e7232d55b
 <p>Journals are where our design thoughts go. They are a stream of conciousness that we write while we are working on a particular task. We use them to keep each other updated on design decisions, think through problems, and to use as a reminder on why certain decisions were made. The format for each log is name_date_project.<p>
 
 ### Resources
-<p>This is where we store resources we used as either refernce or learning material throughout the project. Please don't sue for lack of distribution rights. Cause it'd be a waste of my time and yours.<p>
+<p>This is where we store resources we used as either referencse or learning material throughout the project. Please don't sue for lack of distribution rights, cause it'd be a waste of my time and yours.<p>
 
-### VHDL
-<p>Our VHDL code goes here. We try our best to comment for understanding, but we often get lazy. If you do not understand what is going on, refer to the "Relevant Journals" linked at the top of each file.<p>
+### Source
+<p>Our HDL code goes here. We try our best to comment for understanding, but most of the documentation is in a plain text file in the same folders. These give detailed descriptions of why decisions were made, what constraints were present, and any other useful information.<p>
