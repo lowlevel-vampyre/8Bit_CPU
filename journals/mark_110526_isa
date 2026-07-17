@@ -182,26 +182,27 @@ as well have a look at it:
                      Accessible using Register Pointers with R-type LOAD/STORE
                      Pointer Registers can access this by connecting the remaining
                          4 address bits to 0.
-
     
     0x100 - 0x7FF    Heap (~1.7KB)
                      I2-type only (LDRAM/STRAM)
                      For larger data structures that do not need
                          to be modified often
 
-0x800 - 0xFEF        Unassigned (reserved for expansion)
+# PPU VRAM (0x800 - 0xCCF, 1.23KB MMIO PPU Registers)
+    0x800 - 0xCAF    Tile Map
+    0xCB0 - 0xCBF    Object Attribute Memory (Sprite Data)
+    0xCC0 - 0xCCF    Color/Palette Map
 
-# GPU VRAM
-    0xF?? - 0xF??    GPU sprite registers
-    0xF?? - 0xFF9    GPU palette registers
+# SPU RAM (0xCD0 - 0xCDF, 32B MMIO SPU Registers)
+    0xCD0 - 0xCEF    Reserved for future sound card ideas
 
-# Sound Card
-    0xFFA            AY-3-8910 sound chip address port
-    0xFFB            AY-3-8910 sound chip data port
+# Board LEDs (0xCE0 - CFF, 16B MMIO PWM Registers)
+    0xCF0 - 0xCFF    Reserved for future PWM controlled LED ideas
+
+0xD00- 0xFEF        Unassigned (reserved for expansion)
 
 # Controller MMIO
-    0xFFC            Controller Button Value
-    0xFFD            Controller Joystick Y-Values
-    0xFFE            Controller Joystick X-Values
+    0xFFD            Controller #1 Data (Start, Select, A, B, Up, Down, Left, Right)
+    0xFFE            Controller #2 Data (Start, Select, A, B, Up, Down, Left, Right)
 
-0xFFF            System status / vertical blank flag. 
+0xFFF            V-Blank Flag from PPU 
