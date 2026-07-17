@@ -6,7 +6,7 @@ Trello: https://trello.com/invite/b/6a033a25e39493d68ccb1311/ATTIa34ab2e7232d55b
 
 ---
 
-<p>The goal of this project is to design and implement the architecture for an 8 Bit Gaming Console. The short-term goal is to fully design and spec the architecture before rting it all in VHDL for verification and testing. The long term goal is to eventually put the design on a board using a mix of purchased parts (SRAM, EEPROM, etc), virtual architecture using CPLDs (CPU, PPU), and VLSI design (ALU, Registers, Program Counter, Flags Register) to make a real-life functioning project. To learn more about how we split up our project, keep reading.<p>
+<p>The goal of this project is to design and implement the architecture for an 8 Bit Gaming Console. The short-term goal is to fully design and spec the architecture before writing it all System Verilog for verification and testing. The long term goal is to eventually put the design on a board using a mix of purchased parts (SRAM, EEPROM, etc), virtual architecture using CPLDs (CPU, PPU), and VLSI design (ALU, Registers, Program Counter, Flags Register) to make a real-life functioning project. To learn more about how we split up our project, keep reading.<p>
 
 ---
 ## Project Organization
