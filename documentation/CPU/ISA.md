@@ -1,1 +1,1 @@
-# Iinstruction Set Architecture and CPU Specifics
+# Instruction Set Architecture and CPU Specifics
