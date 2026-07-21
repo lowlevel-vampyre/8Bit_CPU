@@ -1,6 +1,6 @@
 # 8Bit_CPU
 
-<p>8 Bit CPU is a personal project of Mark Livingston (lowlevel_vampyre) and Samir Kabaou (git_username)<p>
+<p>8 Bit CPU is a personal project of Mark Livingston (lowlevel_vampyre) and Samir Kabaou (samkab04)<p>
 
 Trello: https://trello.com/invite/b/6a033a25e39493d68ccb1311/ATTIa34ab2e7232d55be5de5c0eb12bd7588C5260BCF/8bit-cpu
 
