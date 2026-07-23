@@ -1,0 +1,1 @@
+The registers that the PPU reads from really need to have the clock of the CPU. All the PPU does is read from them, so those registers should be tied to the CPU's clock speed, rather than the clock speed of the PPU.
