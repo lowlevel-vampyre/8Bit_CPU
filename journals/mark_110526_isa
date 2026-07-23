@@ -219,4 +219,4 @@ as well have a look at it:
     0xFFD            Controller #1 Data (Start, Select, A, B, Up, Down, Left, Right)
     0xFFE            Controller #2 Data (Start, Select, A, B, Up, Down, Left, Right)
 
-    0xFFF            V-Blank Flag from PPU 
+    0xFFF            Reserved
