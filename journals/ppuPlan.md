@@ -6,7 +6,7 @@ meaning we have to be able to control a display. This is my idea, which is subje
 The first thing to note is what kind of communication we plan to use. Because of simplicity, and the large amount of present documentation,
 the VGA protocol is what we are targeting. This makes it easy for our GPU to output pixel data on a timer to the display (though I will say,
 we are not using a framebuffer). This will be controlled by two timers in the GPU, one for the horizontal pixel, and the other for the
-vertical pixel. The data to print for each pixel will be supplied by a combination of these modules: a 960-byte Tile Map (32 * 30 tiles), 
+vertical pixel. The data to print for each pixel will be supplied by a combination of these modules: a 1200-byte Tile Map (40 * 30 tiles), 
 the 4-sprite OAM (Object Attribute Memory), a 2560-byte Image Buffer (80 images at 16 bytes per image), and finally a 4-Byte Color Buffer
 
 These are architected like so:
