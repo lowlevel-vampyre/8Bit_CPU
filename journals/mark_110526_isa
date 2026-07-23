@@ -207,7 +207,7 @@ as well have a look at it:
 # Timer RAM (0xD30 - 0xD3F, 16B MMIO Timer Registers)
     0xD30 - 0xD3F    Reserved for future Timer Ideas
 
-    0xD10 - 0xFF4    Unassigned (reserved for expansion)
+0xD10 - 0xFF4    Unassigned (reserved for expansion)
 
 # Interrupt Registers (0xFF5 - 0xFFC, 8B Hardware Interrupt Addresses)
     0xFF5 - 0xFF6    Controller Select Interrupt Bytes
