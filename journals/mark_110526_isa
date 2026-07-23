@@ -199,7 +199,10 @@ as well have a look at it:
 # Board LEDs (0xCE0 - CFF, 16B MMIO PWM Registers)
     0xCF0 - 0xCFF    Reserved for future PWM controlled LED ideas
 
-0xD00- 0xFEF        Unassigned (reserved for expansion)
+# Timer RAM (0xD00 - D0F, 16B MMIO Timer Registers)
+    0xD00 - 0xD0F    Reserved for future Timer Ideas
+
+    0xD10 - 0xFEF    Unassigned (reserved for expansion)
 
 # Controller MMIO
     0xFFD            Controller #1 Data (Start, Select, A, B, Up, Down, Left, Right)
