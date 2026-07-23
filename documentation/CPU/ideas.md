@@ -10,4 +10,4 @@ specific addresses. The ideas are:
 
 The idea would be that all the PC control pins go through the interrupt handler, and if a pin gets 
 flipped, it saves the current state to the Return Stack, and then loads an address from the interrupt
-handlers into the PC.
+handler registers into the PC.
