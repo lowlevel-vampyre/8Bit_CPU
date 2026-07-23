@@ -198,14 +198,14 @@ as well have a look at it:
     0xCB0 - 0xCBF    Object Attribute Memory (Sprite Data)
     0xCC0 - 0xCCF    Color/Palette Map
 
-# SPU RAM (0xCD0 - 0xCDF, 32B MMIO SPU Registers)
-    0xCD0 - 0xCEF    Reserved for future sound card ideas
+# SPU RAM (0xCD0 - 0xD0F, 64B MMIO SPU Registers)
+    0xCD0 - 0xD0F    Reserved for future sound card ideas
 
-# Board LEDs (0xCE0 - CFF, 16B MMIO PWM Registers)
-    0xCF0 - 0xCFF    Reserved for future PWM controlled LED ideas
+# Board LEDs (0xD10 - 0xD2F, 32B MMIO PWM Registers)
+    0xD10 - 0xD2F    Reserved for future PWM controlled LED ideas
 
-# Timer RAM (0xD00 - D0F, 16B MMIO Timer Registers)
-    0xD00 - 0xD0F    Reserved for future Timer Ideas
+# Timer RAM (0xD30 - 0xD3F, 16B MMIO Timer Registers)
+    0xD30 - 0xD3F    Reserved for future Timer Ideas
 
     0xD10 - 0xFF4    Unassigned (reserved for expansion)
 
