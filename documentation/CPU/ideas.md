@@ -1,6 +1,8 @@
 The CPU register file should be switched to a 9-bit output for each register to support the $SP. That 
 final bit could be paired to zero unless all 4-bits of the reg-select are high
 
+I will likely need an address decoder to select between RAM adn MMIO
+
 It could be cool to add an interrupt handler. Each interrupt would be paired to a pin, rather than
 specific addresses. The ideas are:
 - Controller Start Press
