@@ -72,5 +72,5 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
     - Bit 5: Palette1
     - Bit 6: unused
     - Bit 7: Shake
-These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, 
+<br>These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, 
 
