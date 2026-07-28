@@ -62,5 +62,5 @@ This ROM holds the pixel data for 64 unique 8x8 tiles. The data is sorted sequen
 - Writable: Yes
 - Memory Mapped to Addresses 0xBC0 - 0xBCF
 - Inputs: WD, ADDR, WE
-- Outputs: 4xSprite_Y, 4xSprite_x, 4xSprite_Math, 4xSprite_Index
+- Outputs: 4xSprite_Y, 4xSprite_x, 4xSprite_Math, 4xSprite_Index  
 Each byte in this module is directly connected 
