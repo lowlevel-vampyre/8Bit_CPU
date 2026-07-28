@@ -24,6 +24,8 @@ Here are useful descriptions the Behavior and ports of each unit in the PPU. For
 <br>
 
 ## Timing Control Unit:
+The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of the 640x480 @59.94Hz output. The TCU wears a lot of hats, but its primary job is calculating which pixel to display.
+
 ##### Inputs: 
 - X
 - Y
@@ -48,8 +50,6 @@ Here are useful descriptions the Behavior and ports of each unit in the PPU. For
 - V_Sync 
 - H_Sync
   
-The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of the 640x480 @59.94Hz output. The TCU wears a lot of hats, but its primary job is calculating which pixel to display:
-
 #### Path of a Pixel:
 The TCU selects its pixels based on the HC and VC. These count each pixel on the screen, and the TCU uses them to to select which pixel exactly needs to be displayed. The TCU does all pixel calculations for the *next* pixel. It stores each fully calculated pixel in the Pixel Buffer, as you will learn about later. To select an actual pixel, the TCU first uses bits 9-4 of the HC, and bits 9-4 of the VC to index the Tile Map. Each virtual tile on the screen corresponds to a memory location in the Tile Map, which holds the Key for which tile is to be displayed at that location. 
 
