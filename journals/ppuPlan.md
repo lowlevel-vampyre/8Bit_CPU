@@ -16,11 +16,11 @@ These are architected like so:
 - 1200 Bytes
 - System RAM (0x800 - CAF)
 - Each byte holds the ID of an 8x8 tile from the Tile Buffer, and each byte corresponds to a tile on the screen. The display is split up
-  into 40 horizontal tiles, and 30 vertical ones. This is purely to match the VGA resolution of 640x480. Using the 8-bits per tile line,
-  the final resolution works out to 320x240, which is half the resolution, making it easy to matchup the pixel. The PPU uses this to
-  determine what pixels it should write to the screen. Since the tiles directly map to the display, the H and V counters control the
-  addressing to the Image Buffer. The CPU will most likely fill this once, and make minor changes if there are any updates (like a new
-  level or something else)
+  into 40 horizontal tiles, and 30 vertical ones. This is purely to match the VGA resolution of 640x480. Using the 8-pixels per tile line,
+  the final resolution works out to 320x240, which is exactly a quarter of the original resolution, making it easy to matchup the pixels.
+  The PPU uses this to determine what pixels it should write to the screen. Since the tiles directly map to the display, the H and V
+  counters control the addressing to the Image Buffer. The CPU will most likely fill this once, and make minor changes if there are any
+  updates (like a new level or something else)
 ---
 ##### Object Attribute Memory (OAM)
 - 16 bytes
