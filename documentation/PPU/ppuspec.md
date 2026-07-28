@@ -12,7 +12,7 @@ This document holds specifications of the PPU, as well as the description of how
 - Sprite Features: Rotate, Flip (x and y)
 - Concurrent Sprites: 4
 - Color: 8-bit color (RRR-GGG-BB), 16-color palette
-- Memory Mapped VRAM: 1200B Tile Map, 16B Object Attribute Memory, 16B Palette Map
+- Memory Mapped VRAM: 960 byte Tile Map, 16 byte Object Attribute Memory, 16 byte Palette Map
 
 
 ### Path of a Pixel:
@@ -32,3 +32,5 @@ After this mux is a Digital to Analog Converter (DAC) that splits these color va
 
 ### Other Timing Control Unit Behaviors
 The Timing Control Unit (TCU), On top of controlling the flow of pixel data, also controls the Counters, the CPU V-Blank Pins, and the Memory Write decoding for VRAM. For the counters, the TCU is responsible incrementing the VC when then HC is finished, and for clearing each counter when it has reached the end of its count (800 for HC, 525 for VC). When the Counters are in BLANK (H-Blank or V-Blank), the TCU makes sure that the VGA port only gets black pixels. In V-Blank, the TCU also flips a V-Blank pin that the CPU reads to know it is time to update VRAM. If the V-Blank pin is not active, the CPU should not write to VRAM. When the CPU does write to VRAM, the TCU acts as a controller to determine, based on the address, which of its internal memory devices to write to. Additionally, it is responsible for strobing the H-Sync and V-Sync signals on the VGA port. 
+
+### Unit Descriptions
