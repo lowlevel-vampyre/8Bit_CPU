@@ -4,9 +4,9 @@ This document holds specifications of the PPU, as well as the description of how
 
 ## Technical Specs:
 - Pixel Clock: 25.175 MHz
-- Display Output: VGA, 640x480 @ 59.94Hz
+- Display Output: VGA, 640x480 @59.94Hz
 - Full Resolution: 800x525
-- Virtual Resolution: 320x240 @ 59.94Hz
+- Virtual Resolution: 320x240 @59.94Hz
 - Game Window: 256x240
 - Virtual Tile Area: 32 tiles wide, 30 tiles tall (each tile 8x8 pixels)
 - Unique Tiles: 64
@@ -19,10 +19,10 @@ This document holds specifications of the PPU, as well as the description of how
 ## Unit Descriptions
 
 ### Timing Control Unit:
-The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of 
+The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of the 640x480 @59.94Hz output. The TCU wears a lot of hats, but its primary job is calculating which pixel to display:
 
 ##### Path of a Pixel:
-The process of the PPU is simply described like so: The PPU Master is the Horizontal Counter (HC). This counts each pixel on the screen, and tells the Timing Control Unit (TCU) to increment the Vertical Counter (VC) when neccesary. The TCU delegates on behalf of the HC, controlling the flow of data in the PPU. The TCU spends most of its time selecting tiles and sprites. It uses bits 9-4 of the HC, and bits 9-4 of the VC to index the Tile Map. Each virtual tile on the screen corresponds to a memory location in the Tile Map, which holds the Key for which tile is to be displayed at that location. 
+The TCU selects its pixels based on the HC and VC. These count each pixel on the screen, and the TCU uses them to to select which pixel exactly needs to be displayed. The TCU does all pixel calculations for the *next* pixel. It stores each fully calculated pixel in the Pixel Buffer, as you will learn about later. To select an actual pixel, the TCU first uses bits 9-4 of the HC, and bits 9-4 of the VC to index the Tile Map. Each virtual tile on the screen corresponds to a memory location in the Tile Map, which holds the Key for which tile is to be displayed at that location. 
 
 Once the key is selected, it is passed to the Tile ROM, which has 3-inputs: Tile_Sel, Y_Pixel_Sel, and X_Pixel_Sel. Each tile is stored inside the Tile ROM as a series of bits. Each individual pixel is represented by 4 bits, meaning each byte in the Tile ROM holds the data for 2 pixels. Each 8x8 tile then is 256-bits long. To select a pixel, the 2-bit X_Pixel_Sel (bits 3-2 of HC) are used to index which of the 4 pixel bytes are to be selected. The 3-bit Y_Pixel_Sel (bits 3-1 of VC) are used to determine which row of pixels to select. Finally, the 6-bit Tile Sel is used to index each sprite. All these values are concatenated together to form a full 11-bit address, which selects the full 2048-bytes address each pixel byte. The Pixel byte is then output to the Pixel Calculator (PXC).
 
@@ -38,4 +38,23 @@ After this mux is a Digital to Analog Converter (DAC) that splits these color va
 
 ##### Other Timing Control Unit Behaviors
 The Timing Control Unit (TCU), On top of controlling the flow of pixel data, also controls the Counters, the CPU V-Blank Pins, and the Memory Write decoding for VRAM. For the counters, the TCU is responsible incrementing the VC when then HC is finished, and for clearing each counter when it has reached the end of its count (800 for HC, 525 for VC). When the Counters are in BLANK (H-Blank or V-Blank), the TCU makes sure that the VGA port only gets black pixels. In V-Blank, the TCU also flips a V-Blank pin that the CPU reads to know it is time to update VRAM. If the V-Blank pin is not active, the CPU should not write to VRAM. When the CPU does write to VRAM, the TCU acts as a controller to determine, based on the address, which of its internal memory devices to write to. Additionally, it is responsible for strobing the H-Sync and V-Sync signals on the VGA port. 
+
+### VRAM
+VRAM is split into 6 separate modules that hold some information for the PPU. The specifics of each are detailed below:
+
+##### Tile Map
+- Size: 960 bytes
+- Writable: Yes
+- Memory Mapped to Addresses 0x800 - 0xBBF
+- Inputs: WD, ADDR, WE
+- Outputs: TileSel
+Each byte in this map corresponds to a virtual tile on the screen. The byte holds the ID for 1 of the 64 possible tiles that can be drawn. At the moment, only the bottom 6-bits are used as a key. The top 2 bits are unused. The output of this module is fed to the Tile ROM Module. This module is CPU writable, and should only be written during VBLANK, as the contents are not being used. Modifying while the PPU is drawing the screen can create tearing.
+
+##### Tile ROM
+- Size: 2048 bytes
+- Writable: No
+- Inputs: Y_Pix_Sel, X_Pix_Sel, TileSel
+- Outputs: Pixel_Byte
+This ROM holds the pixel data for 64 unique 8x8 tiles. The data is sorted sequentially, with each pixel taking up 4-bits of data to represent a 4-bit index of Palette Map. Each tile takes up 32-bytes of data ([8 * 8 * 4] / 8). Since each pixel is 4-bits, each byte stores the data for 2 pixels. It is simple to address each pixel and each line using bit-manipulation by understanding what each bit in the Tile ROM Address corresponds to. Bits 1-0 correspond to the Pixel Byte for each line. Bits 4-2 correspond to which each line of a Tile
+
 
