@@ -68,6 +68,30 @@ The Timing Control Unit (TCU), On top of controlling the flow of pixel data, als
 
 <br>
 
+## Pixel Calculator:
+The Pixel Calculator, or PXC, is the controller to decide which pixel to print. It has a direct connection to the Object Attribute Memory, and uses this data to decide when to output tile data or when to output sprite data. 
+
+##### Inputs: 
+- X
+- Y
+- Tile_Pixel_Byte
+- Sprite_Pixel_Byte
+- 4xSprite_X
+- 4xSprite_Y
+- 4xSprite_Math
+- 4xSprite_Index
+
+##### Outputs: 
+- Sprite_Index
+- X_Sprite_Pix_Sel
+- Y_Sprite_Pix_Sel
+- Pixel_Data
+  
+#### Calculating which pixel to output:
+The process for calculating which pixel to output is decently complicated, and requires many hops between VRAM units, and many arithmetic computations. The first step is determining whether a Sprite overlaps with the current pixel. The way to do this is simple: A sprite is always an 8x8 image, and so for each axis (x & y) you subtract the sprite position from the pixel position. If the result is between 0 and 7, then you have an overlap. In the event of an overlap, the PXC calculates which pixel it needs to grab from the Sprite ROM. How it does this is detailed in the ***Pixel Math*** section. Once the Sprite Pixel Address is passed to the Sprite ROM, the resulting Pixel byte is returned to the PXC. Then
+
+<br>
+
 ## VRAM
 VRAM is split into 6 separate modules that hold some information for the PPU. The specifics of each are detailed below:
 
