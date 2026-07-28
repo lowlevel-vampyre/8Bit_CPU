@@ -40,6 +40,7 @@ After this mux is a Digital to Analog Converter (DAC) that splits these color va
 
 #### Other Timing Control Unit Behaviors
 The Timing Control Unit (TCU), On top of controlling the flow of pixel data, also controls the Counters, the CPU V-Blank Pins, and the Memory Write decoding for VRAM. For the counters, the TCU is responsible incrementing the VC when then HC is finished, and for clearing each counter when it has reached the end of its count (800 for HC, 525 for VC). When the Counters are in BLANK (H-Blank or V-Blank), the TCU makes sure that the VGA port only gets black pixels. In V-Blank, the TCU also flips a V-Blank pin that the CPU reads to know it is time to update VRAM. If the V-Blank pin is not active, the CPU should not write to VRAM. When the CPU does write to VRAM, the TCU acts as a controller to determine, based on the address, which of its internal memory devices to write to. Additionally, it is responsible for strobing the H-Sync and V-Sync signals on the VGA port. 
+
 <br>
 
 ## VRAM
