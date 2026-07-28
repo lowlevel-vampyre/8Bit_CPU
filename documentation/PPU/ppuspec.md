@@ -19,9 +19,7 @@ This document holds specifications of the PPU, as well as the description of how
 <br>
 
 # Unit Descriptions
-  Here are useful descriptions the Behavior and ports of each unit in the PPU. For added clarity, you can reference the PPU Datapath while reading
-
-<br>
+Here are useful descriptions the Behavior and ports of each unit in the PPU. For added clarity, you can reference the PPU Datapath while reading
 
 ## Timing Control Unit:
 The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of the 640x480 @59.94Hz output. The TCU wears a lot of hats, but its primary job is calculating which pixel to display.
@@ -77,30 +75,30 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
 - Size: 960 bytes
 - Writable: Yes
 - Memory Mapped to Addresses 0x800 - 0xBBF
-- Inputs: WD, ADDR, WE
-- Outputs: TileSel
+- **Inputs:** WD, ADDR, WE
+- **Outputs:** TileSel
 <br>Each byte in this map corresponds to a virtual tile on the screen. The byte holds the ID for 1 of the 64 possible tiles that can be drawn. At the moment, only the bottom 6-bits are used as a key. The top 2 bits are unused. The output of this module is fed to the Tile ROM Module. This module is CPU writable, and should only be written during VBLANK, as the contents are not being used. Modifying while the PPU is drawing the screen can create tearing.
 
 #### Tile ROM
 - Size: 2048 bytes
 - Writable: No
-- Inputs: X_Pix_Sel, Y_Pix_Sel, TileSel
-- Outputs: Pixel_Byte
+- **Inputs:** X_Pix_Sel, Y_Pix_Sel, TileSel
+- **Outputs:** Pixel_Byte
 <br>This ROM holds the pixel data for 64 unique 8x8 tiles. The data is sorted sequentially, with each pixel taking up 4-bits of data to represent a 4-bit index of Palette Map. Each tile takes up 32-bytes of data ([8 * 8 * 4] / 8). Since each pixel is 4-bits, each byte stores the data for 2 pixels. It is simple to address each pixel and each line using bit-manipulation by understanding what each bit in the Tile ROM Address corresponds to. Bits 1-0 correspond to the Pixel Byte for each line. Bits 4-2 correspond to which each line of a Tile. And bits 11 - 5 correspond to a unique tile. This unit does not split the pixel byte, but simply outputs the selected byte.
 
 #### Sprite ROM
 - Size: 512 bytes
 - Writable: No
-- Inputs: X_Pix_Sel, Y_Pix_Sel, SpriteSel
-- Outputs: Pixel_Byte
+- **Inputs:** X_Pix_Sel, Y_Pix_Sel, SpriteSel
+- **Outputs:** Pixel_Byte
 <br>This ROM holds the pixel data for 16 unique 8x8 sprites. It behaves and is architected exactly the same as the above Tile ROM.
 
 #### Object Attribute Memory (OAM)
 - Size: 16 bytes
 - Writable: Yes
 - Memory Mapped to Addresses 0xBC0 - 0xBCF
-- Inputs: WD, ADDR, WE
-- Outputs: 4x(Sprite_X, Sprite_Y, Sprite_Math, Sprite_Index)
+- **Inputs:** WD, ADDR, WE
+- **Outputs:** 4x(Sprite_X, Sprite_Y, Sprite_Math, Sprite_Index)
 <br>Each byte in this module is directly connected to the Pixel Calculator (PXC). There is a unique output for each of the 4 possible concurrent sprites. Each sprites requires 4 bytes of data. The first and second byte store the X and Y position of the sprite respectively. The actual position of a sprite is considered to be the top left pixel. The third byte holds the Sprite Math register, which is mapped like so:
     - Bit 0: X-Flip
     - Bit 1: Y-Flip
@@ -118,14 +116,14 @@ The fourth and final byte represents which of the 16 unique sprites to render. T
 ##### Pixel Buffer
 - Size: 1 byte
 - Writable: No
-- Inputs: IN
-- Outputs: OUT
+- **Inputs:** IN
+- **Outputs:** OUT
 <br>This Buffer is designed to hold the data of the previous pixel while the next pixel is being calculated. This ensures that the pixel is held high for the entirety of the Pixel Clock duration. When the clock oscillates, the data waiting to be saved is saved, and the output of the Pixel Buffer changes and quickly propagates to the VGA port
 
 ##### Palette Map
 - Size: 64 bytes
 - Writable: Yes
 - Memory Mapped to Addresses 0xBD0 - 0xC0F
-- Inputs: WD, ADDR, WE
-- Outputs: TileSel
+- **Inputs:** WD, ADDR, WE
+- **Outputs:** TileSel
 <br>Each byte in this map holds an 8-bit color. This is indexed by the 6-bits stored inside the Pixel Buffer. While only the bottom 16 bytes (aka Palette 0) are addressable by the Tile ROM. However, the Sprites have access to the other 3 palettes are able to be used by the sprites using the Palette0 and Palette1 bits in the Sprite_Math byte. This is a low latency translation unit to convert from a color code to an 8-bit color. 
