@@ -69,7 +69,7 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
     - 0010: 180 degree rotation
     - 0100: 270 degree rotation
     - 1000: 360 degree rotation (essentially equal to no rotation)
-and the bottom 4 bits represent a transformation, mapped like so:
+<br>and the bottom 4 bits represent a transformation, mapped like so:<br>
     - 0000: No transformation
     - 0001: flipped along the x-axis (turned around)
     - 0010: flipped along the y-axis (upside down)
