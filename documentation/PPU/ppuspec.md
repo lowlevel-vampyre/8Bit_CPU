@@ -7,7 +7,7 @@ This document holds specifications of the PPU, as well as the description of how
 - Virtual Resolution: 320x240@60Hz
 - Game Window: 256x240
 - Color: 8-bit color, 16-color palette
-- Virtual Tile Area: 40 tiles wide, 30 tiles tall (each tile 8x8 pixels)
+- Virtual Tile Area: 32 tiles wide, 30 tiles tall (each tile 8x8 pixels)
 - Unique Tiles: 64
 - Unique Sprites: 16
 - Sprite Features: Rotate, Flip (x and y)
