@@ -19,10 +19,14 @@ This document holds specifications of the PPU, as well as the description of how
 <br>
 
 # Unit Descriptions
+Here are useful descriptions the Behavior and ports of each unit in the PPU. For added clarity, you can reference the PPU Datapath while reading
 
 <br>
 
 ## Timing Control Unit:
+##### Inputs: X, Y, PPU_WE, PPU_Write_Addr
+##### Outputs: V_INC, V_RST, H_RST, Y_Pix_Sel, X_Pix_Sel, Tile_WE, Tile_Addr, Sprite_WE, Sprite_Addr, Color_WE, Color_Addr, BLANK, H_BLANK, V_BLANK, V_Sync, H_Sync
+  
 The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of the 640x480 @59.94Hz output. The TCU wears a lot of hats, but its primary job is calculating which pixel to display:
 
 #### Path of a Pixel:
