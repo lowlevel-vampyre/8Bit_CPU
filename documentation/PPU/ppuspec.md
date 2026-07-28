@@ -1,5 +1,5 @@
-# PPU Specifications
-This document holds specifications of the PPU, as well as the description of how it behaves and what constraints it operates under. This document acts as the primary descripter for the PPU when designing it in RTL Design
+# Pixel Processing Unit Spec Sheet
+This document holds specifications of the Pixel Processing Unit (PPU), as well as the description of how it behaves and what constraints it operates under. This document acts as the primary descripter for the PPU when designing it in RTL Design
 
 
 ## Technical Specs:
