@@ -4,8 +4,9 @@ This document holds specifications of the PPU, as well as the description of how
 
 ## Technical Specs:
 - Pixel Clock: 25.175 MHz
-- Display Output: VGA, 640x480@59.94Hz
-- Virtual Resolution: 320x240@59.94Hz
+- Display Output: VGA, 640x480 @ 59.94Hz
+- Full Resolution: 800x525
+- Virtual Resolution: 320x240 @ 59.94Hz
 - Game Window: 256x240
 - Virtual Tile Area: 32 tiles wide, 30 tiles tall (each tile 8x8 pixels)
 - Unique Tiles: 64
