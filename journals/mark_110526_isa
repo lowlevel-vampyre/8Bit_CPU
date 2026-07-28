@@ -193,21 +193,21 @@ as well have a look at it:
                      For larger data structures that do not need
                          to be modified often
 
-# PPU VRAM (0x800 - 0xCCF, 1.23KB MMIO PPU Registers)
-    0x800 - 0xCAF    Tile Map
-    0xCB0 - 0xCBF    Object Attribute Memory (Sprite Data)
-    0xCC0 - 0xCCF    Color/Palette Map
+# PPU VRAM (0x800 - 0xBC0, 1.23KB MMIO PPU Registers)
+    0x800 - 0xBBF    Tile Map
+    0xBC0 - 0xBCF    Object Attribute Memory (Sprite Data)
+    0xBD0 - 0xBDF    Color/Palette Map
 
 # SPU RAM (0xCD0 - 0xD0F, 64B MMIO SPU Registers)
-    0xCD0 - 0xD0F    Reserved for future sound card ideas
+    0xBE0 - 0xC1F    Reserved for future sound card ideas
 
 # Board LEDs (0xD10 - 0xD2F, 32B MMIO PWM Registers)
-    0xD10 - 0xD2F    Reserved for future PWM controlled LED ideas
+    0xC20 - 0xC3F    Reserved for future PWM controlled LED ideas
 
 # Timer RAM (0xD30 - 0xD3F, 16B MMIO Timer Registers)
-    0xD30 - 0xD3F    Reserved for future Timer Ideas
+    0xC40 - 0xC4F    Reserved for future Timer Ideas
 
-0xD40 - 0xFF4    Unassigned (reserved for expansion)
+0xC50 - 0xFF4    Unassigned (reserved for expansion)
 
 # Interrupt Registers (0xFF5 - 0xFFC, 8B Hardware Interrupt Addresses)
     0xFF5 - 0xFF6    Controller Select Interrupt Bytes
