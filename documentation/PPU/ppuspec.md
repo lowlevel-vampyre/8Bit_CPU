@@ -64,14 +64,14 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
 - Inputs: WD, ADDR, WE
 - Outputs: 4x(Sprite_X, Sprite_Y, Sprite_Math, Sprite_Index)
 <br>Each byte in this module is directly connected to the Pixel Calculator (PXC). There is a unique output for each of the 4 possible concurrent sprites. Each sprites requires 4 bytes of data. The first and second byte store the X and Y position of the sprite respectively. The actual position of a sprite is considered to be the top left pixel. The third byte holds the Sprite Math register, which is split into values. The top 4 bits represent a rotation, mapped like so:
-      - 0000: No rotation
-      - 0001: 90 degree rotation
-      - 0010: 180 degree rotation
-      - 0100: 270 degree rotation
-      - 1000: 360 degree rotation (essentially equal to no rotation)
+    - 0000: No rotation
+    - 0001: 90 degree rotation
+    - 0010: 180 degree rotation
+    - 0100: 270 degree rotation
+    - 1000: 360 degree rotation (essentially equal to no rotation)
 and the bottom 4 bits represent a transformation, mapped like so:
-      - 0000: No transformation
-      - 0001: flipped along the x-axis (turned around)
-      - 0010: flipped along the y-axis (upside down)
-      - 0100: unbound
-      - 1000: unbound
+    - 0000: No transformation
+    - 0001: flipped along the x-axis (turned around)
+    - 0010: flipped along the y-axis (upside down)
+    - 0100: unbound
+    - 1000: unbound
