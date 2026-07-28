@@ -48,19 +48,30 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
 - Memory Mapped to Addresses 0x800 - 0xBBF
 - Inputs: WD, ADDR, WE
 - Outputs: TileSel
-\Each byte in this map corresponds to a virtual tile on the screen. The byte holds the ID for 1 of the 64 possible tiles that can be drawn. At the moment, only the bottom 6-bits are used as a key. The top 2 bits are unused. The output of this module is fed to the Tile ROM Module. This module is CPU writable, and should only be written during VBLANK, as the contents are not being used. Modifying while the PPU is drawing the screen can create tearing.
+<br>Each byte in this map corresponds to a virtual tile on the screen. The byte holds the ID for 1 of the 64 possible tiles that can be drawn. At the moment, only the bottom 6-bits are used as a key. The top 2 bits are unused. The output of this module is fed to the Tile ROM Module. This module is CPU writable, and should only be written during VBLANK, as the contents are not being used. Modifying while the PPU is drawing the screen can create tearing.
 
 ##### Tile ROM
 - Size: 2048 bytes
 - Writable: No
 - Inputs: X_Pix_Sel, Y_Pix_Sel, TileSel
 - Outputs: Pixel_Byte
-   This ROM holds the pixel data for 64 unique 8x8 tiles. The data is sorted sequentially, with each pixel taking up 4-bits of data to represent a 4-bit index of Palette Map. Each tile takes up 32-bytes of data ([8 * 8 * 4] / 8). Since each pixel is 4-bits, each byte stores the data for 2 pixels. It is simple to address each pixel and each line using bit-manipulation by understanding what each bit in the Tile ROM Address corresponds to. Bits 1-0 correspond to the Pixel Byte for each line. Bits 4-2 correspond to which each line of a Tile. And bits 11 - 5 correspond to a unique tile. This unit does not split the pixel byte, but simply outputs the selected byte.
+<br>This ROM holds the pixel data for 64 unique 8x8 tiles. The data is sorted sequentially, with each pixel taking up 4-bits of data to represent a 4-bit index of Palette Map. Each tile takes up 32-bytes of data ([8 * 8 * 4] / 8). Since each pixel is 4-bits, each byte stores the data for 2 pixels. It is simple to address each pixel and each line using bit-manipulation by understanding what each bit in the Tile ROM Address corresponds to. Bits 1-0 correspond to the Pixel Byte for each line. Bits 4-2 correspond to which each line of a Tile. And bits 11 - 5 correspond to a unique tile. This unit does not split the pixel byte, but simply outputs the selected byte.
 
 ##### Object Attribute Memory (OAM)
 - Size: 16 bytes
 - Writable: Yes
 - Memory Mapped to Addresses 0xBC0 - 0xBCF
 - Inputs: WD, ADDR, WE
-- Outputs: 4xSprite_Y, 4xSprite_x, 4xSprite_Math, 4xSprite_Index
-  Each byte in this module is directly connected 
+- Outputs: 4x(Sprite_X, Sprite_Y, Sprite_Math, Sprite_Index)
+<br>Each byte in this module is directly connected to the Pixel Calculator (PXC). There is a unique output for each of the 4 possible concurrent sprites. Each sprites requires 4 bytes of data. The first and second byte store the X and Y position of the sprite respectively. The actual position of a sprite is considered to be the top left pixel. The third byte holds the Sprite Math register, which is split into values. The top 4 bits represent a rotation, mapped like so:
+      - 0000: No rotation
+      - 0001: 90 degree rotation
+      - 0010: 180 degree rotation
+      - 0100: 270 degree rotation
+      - 1000: 360 degree rotation (essentially equal to no rotation)
+and the bottom 4 bits represent a transformation, mapped like so:
+      - 0000: No transformation
+      - 0001: flipped along the x-axis (turned around)
+      - 0010: flipped along the y-axis (upside down)
+      - 0100: unbound
+      - 1000: unbound
