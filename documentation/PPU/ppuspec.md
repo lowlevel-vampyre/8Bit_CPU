@@ -20,6 +20,8 @@ This document holds specifications of the PPU, as well as the description of how
 
 # Unit Descriptions
 
+<br>
+
 ## Timing Control Unit:
 The Timing Control Unit, or TCU, is the primary controller of data flow inside the PPU. It makes its decisions based on the Horizontal Counter (HC) and the Vertical Counter (VC), and asserts signals to produce the VGA output within the timing spec of the 640x480 @59.94Hz output. The TCU wears a lot of hats, but its primary job is calculating which pixel to display:
 
