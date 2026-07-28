@@ -57,6 +57,13 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
 - Outputs: Pixel_Byte
 <br>This ROM holds the pixel data for 64 unique 8x8 tiles. The data is sorted sequentially, with each pixel taking up 4-bits of data to represent a 4-bit index of Palette Map. Each tile takes up 32-bytes of data ([8 * 8 * 4] / 8). Since each pixel is 4-bits, each byte stores the data for 2 pixels. It is simple to address each pixel and each line using bit-manipulation by understanding what each bit in the Tile ROM Address corresponds to. Bits 1-0 correspond to the Pixel Byte for each line. Bits 4-2 correspond to which each line of a Tile. And bits 11 - 5 correspond to a unique tile. This unit does not split the pixel byte, but simply outputs the selected byte.
 
+##### Sprite ROM
+- Size: 512 bytes
+- Writable: No
+- Inputs: X_Pix_Sel, Y_Pix_Sel, SpriteSel
+- Outputs: Pixel_Byte
+<br>This ROM holds the pixel data for 16 unique 8x8 sprites. It behaves and is architected exactly the same as the above Tile ROM.
+
 ##### Object Attribute Memory (OAM)
 - Size: 16 bytes
 - Writable: Yes
@@ -72,5 +79,22 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
     - Bit 5: Palette1
     - Bit 6: unused
     - Bit 7: Shake
-<br>These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, 
 
+<br>These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, and a single pixel shake. I go into more detail on how these are utilized in the ***Pixel Calculator*** section. 
+
+The fourth and final byte represents which of the 16 unique sprites to render. The sprite index is passed into the Pixel Calculator, then to the Sprite ROM
+
+##### Pixel Buffer
+- Size: 1 byte
+- Writable: No
+- Inputs: IN
+- Outputs: OUT
+<br>This Buffer is designed to hold the data of the previous pixel while the next pixel is being calculated. This ensures that the pixel is held high for the entirety of the Pixel Clock duration. When the clock oscillates, the data waiting to be saved is saved, and the output of the Pixel Buffer changes and quickly propagates to the VGA port
+
+##### Palette Map
+- Size: 64 bytes
+- Writable: Yes
+- Memory Mapped to Addresses 0xBD0 - 0xC0F
+- Inputs: WD, ADDR, WE
+- Outputs: TileSel
+<br>Each byte in this map holds an 8-bit color. This is indexed by the 6-bits stored inside the Pixel Buffer. While only the bottom 16 bytes (aka Palette 0) are addressable by the Tile ROM. However, the Sprites have access to the other 3 palettes are able to be used by the sprites using the Palette0 and Palette1 bits in the Sprite_Math byte. This is a low latency translation unit to convert from a color code to an 8-bit color. 
