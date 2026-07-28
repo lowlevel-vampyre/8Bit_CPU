@@ -19,7 +19,7 @@ This document holds specifications of the PPU, as well as the description of how
 <br>
 
 # Unit Descriptions
-Here are useful descriptions the Behavior and ports of each unit in the PPU. For added clarity, you can reference the PPU Datapath while reading
+    Here are useful descriptions the Behavior and ports of each unit in the PPU. For added clarity, you can reference the PPU Datapath while reading
 
 <br>
 
