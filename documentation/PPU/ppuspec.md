@@ -11,7 +11,7 @@ This document holds specifications of the PPU, as well as the description of how
 - Unique Sprites: 16
 - Sprite Features: Rotate, Flip (x and y)
 - Concurrent Sprites: 4
-- Color: 8-bit color (RRR-GGG-BB), 16-color palette
+- Color: 8-bit color (RRR-GGG-BB), 16 concurrent-color palette
 - Memory Mapped VRAM: 960 byte Tile Map, 16 byte Object Attribute Memory, 16 byte Palette Map
 
 
