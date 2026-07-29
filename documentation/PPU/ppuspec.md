@@ -176,7 +176,7 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
     - Bit 6: Dither
     - Bit 7: Shake
 
-<br>These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, and a single pixel shake. I go into more detail on how these are utilized in the ***Pixel Calculator*** section. 
+These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, and a single pixel shake. I go into more detail on how these are utilized in the ***Pixel Calculator*** section. 
 
 The fourth and final byte represents which of the 16 unique sprites to render. The sprite index is passed into the Pixel Calculator, then to the Sprite ROM
 
