@@ -167,8 +167,6 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
 - **Inputs:** WD, ADDR, WE
 - **Outputs:** 4x(Sprite_X, Sprite_Y, Sprite_Math, Sprite_Index)
 <br>Each byte in this module is directly connected to the Pixel Calculator (PXC). There is a unique output for each of the 4 possible concurrent sprites. Each sprites requires 4 bytes of data. The first and second byte store the X and Y position of the sprite respectively. The actual position of a sprite is considered to be the top left pixel. The third byte holds the Sprite Math register, which is mapped like so:
-
-**Sprite Math Bit Layout:**
     - Bit 0: X-Flip
     - Bit 1: Y-Flip
     - Bit 2: Diagonal-Flip
