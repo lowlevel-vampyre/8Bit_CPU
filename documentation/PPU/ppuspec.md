@@ -59,7 +59,7 @@ While each tile is constrained to a specific Virtual Tile on the screen, sprites
 
 The Sprite ROM is identical in behavior to the Tile ROM. Once the Pixel byte is selected, it is passed back to the PXC. Before the PXC actually decides what to output, it first uses its inputs to determine whether to output the High or Low Pixel inside the Pixel byte. Once it gets this, it determines if the current sprite pixel is transparent. If so, it passes the Tile Pixel instead. Once the pixel as cleared the PXC, it passes to the Pixel Buffer. The Pixel Buffer is needed to reduce the delay between calculation. The hardware is not quick enough to do all the calculations in time to display the pixel without significant delay. Instead, all pixel calculations are done for the next pixel. At this point, the data to be written to the Pixel Buffer is sitting and waiting to be written, while the Pixel Buffer outputs the current pixel value to the Palette Map.
 
-The Palette Map is a CPU addressable block of memory capable of holding 16 colors at a time. The pixel data that has been passed around this whole time actually just holds which color is to be printed. Each of the 16-colors are each 8-bit, in the bit format of RRR-GGG-BB. Once the color has been selected, it is passed through a mux controlled by the TCU. When the TCU evaluates that it needs to display a pixel, it selects the output of the Palette Map. However, when the VGA signal is in BLANK, it instead flips the mux, outputting all zeros. 
+The Palette Map is a CPU addressable block of memory capable of holding 16 colors at a time. The pixel data that has been passed around this whole time actually just holds which color is to be outputed. Each of the 16-colors are each 8-bit, in the bit format of RRR-GGG-BB. Once the color has been selected, it is passed through a mux controlled by the TCU. When the TCU evaluates that it needs to display a pixel, it selects the output of the Palette Map. However, when the VGA signal is in BLANK, it instead flips the mux, outputting all zeros. 
 
 After this mux is a Digital to Analog Converter (DAC) that splits these color values into their Red Green and Blue components, and then uses a resistor ladder to output a 0.7 - 0v voltage to the VGA port. 
 
@@ -69,7 +69,7 @@ The Timing Control Unit (TCU), On top of controlling the flow of pixel data, als
 <br>
 
 ## Pixel Calculator:
-The Pixel Calculator, or PXC, is the controller to decide which pixel to print. It has a direct connection to the Object Attribute Memory, and uses this data to decide when to output tile data or when to output sprite data. 
+The Pixel Calculator, or PXC, is the controller to decide which pixel to output. It has a direct connection to the Object Attribute Memory, and uses this data to decide when to output tile data or when to output sprite data. 
 
 ##### Inputs: 
 - X
@@ -88,7 +88,18 @@ The Pixel Calculator, or PXC, is the controller to decide which pixel to print. 
 - Pixel_Data
   
 #### Calculating which pixel to output:
-The process for calculating which pixel to output is decently complicated, and requires many hops between VRAM units, and many arithmetic computations. The first step is determining whether a Sprite overlaps with the current pixel. The way to do this is simple: A sprite is always an 8x8 image, and so for each axis (x & y) you subtract the sprite position from the pixel position. If the result is between 0 and 7, then you have an overlap. In the event of an overlap, the PXC calculates which pixel it needs to grab from the Sprite ROM. How it does this is detailed in the ***Pixel Math*** section. Once the Sprite Pixel Address is passed to the Sprite ROM, the resulting Pixel byte is returned to the PXC. Then
+The process for calculating which pixel to output is decently complicated, and requires many hops between VRAM units, and many arithmetic computations. The first step is determining whether a Sprite overlaps with the current pixel (If the Sprite Disable bit in Sprite_Math is on, this following step is skipped and the tile pixel is passed through). The way to do this is simple: A sprite is always an 8x8 image, and so for each axis (x & y) you subtract the sprite position from the pixel position. If the result is between 0 and 7, then you have an overlap (when calculating the overlap, the Shake bit from Sprite_Math is added to the Sprite X position). In the event of an overlap, the PXC calculates which pixel it needs to grab from the Sprite ROM. How it does this is detailed in the ***Pixel Math*** section. 
+
+Once the Sprite Pixel Address is passed to the Sprite ROM, the resulting Pixel byte is returned to the PXC. Now the PXC has both pixel bytes, it splits them both into high and low pixels. Then, if the Sprite pixel is transparent, the tile data is output and padded with zeros to become 6 bits. Otherwise, the sprite pixel is output, and the output is padded with the values of Palette0 (bit 4) and Palette1 (bit 5). At this point, the PXC's job is complete, and the pixel is stored in the Pixel Buffer for the following cycle.
+
+#### Pixel Math
+Earlier I mentioned that the PXC does some funky calculations to determine which sprite pixel it wants to select. The PXC performs many functions, and each correspond to a bit in Sprite_Math, so I will just explain what each one does:
+
+##### Basic Calculation:
+The general format of any PXC sprite calculation starts with taking the Pixel position and comparing it against each of the 4 Concurrent Sprites stored inside the OAM. This is done by subtracting the position of the Sprite from the Pixel Position. To further explain with an example, say you wanted to output the top left pixel at the current screen pixel. Since the X and Y coordinates correspond to that top left corner, the screen coordinates and the sprite position should produce a zero sum after the subtraction. Instead, say you wanted to output the 6th pixel on the 3rd rank/line. The X position of the screen pixel is 6 larger than the sprite location. The same logic applies to the Y position. You can then see how the difference between the position always indicates which pixel of the sprite needs to be printed.
+
+##### Transformations:
+It would be no fun, and a little tedious, if all the PPU could do was print static sprites. To save on space, and because it is conceptually easy to implement, we are adding the feature of sprite transformations. The 3 bits that select which sprite transformation to do are the 
 
 <br>
 
