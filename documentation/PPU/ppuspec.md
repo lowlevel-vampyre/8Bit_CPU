@@ -11,9 +11,9 @@ This document holds specifications of the Pixel Processing Unit (PPU), as well a
 - Virtual Tile Area: 32 tiles wide, 30 tiles tall (each tile 8x8 pixels)
 - Unique Tiles: 64
 - Unique Sprites: 16
-- Sprite Features: Rotate, Flip (x and y)
+- Sprite Features: Rotate, Flip(x & y), Dither, Shake, Disable, 4-color palette swap
 - Concurrent Sprites: 4
-- Color: 8-bit color (RRR-GGG-BB), 4x16 color palettes
+- Color: 8-bit color (RRR-GGG-BB), 4x16-color palettes
 - Memory Mapped VRAM: 960 byte Tile Map, 16 byte Object Attribute Memory, 64 byte Palette Map
 
 <br>
