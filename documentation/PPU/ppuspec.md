@@ -43,10 +43,9 @@ The Timing Control Unit, or TCU, is the primary controller of data flow inside t
 - Color_WE 
 - Color_Addr (5-0)
 - BLANK 
-- CPU_Frame (7-0)
+- Status (7-0)
 - V_Sync 
 - H_Sync
-- Status
   
 ### Path of a Pixel:
 
