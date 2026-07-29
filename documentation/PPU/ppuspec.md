@@ -34,19 +34,19 @@ The Timing Control Unit, or TCU, is the primary controller of data flow inside t
 - V_INC 
 - V_RST 
 - H_RST 
-- Y_Pix_Sel 
-- X_Pix_Sel 
+- Y_Pix_Sel
+- X_Pix_Sel
 - Tile_WE 
-- Tile_Addr 
+- Tile_Addr (8-0)
 - Sprite_WE 
-- Sprite_Addr 
+- Sprite_Addr (3-0)
 - Color_WE 
-- Color_Addr 
+- Color_Addr (5-0)
 - BLANK 
-- H_BLANK 
-- V_BLANK 
+- CPU_Frame (7-0)
 - V_Sync 
 - H_Sync
+- Status
   
 #### Path of a Pixel:
 
@@ -73,8 +73,14 @@ The Palette Map is a CPU addressable block of memory capable of holding 64 color
 
 After this mux is a Digital to Analog Converter (DAC) gets the wire holding each color value, split into their Red Green and Blue components, and then uses a resistor ladder to output a 0.7 - 0v voltage to the VGA port. 
 
-#### Other Timing Control Unit Behaviors
-The Timing Control Unit (TCU), On top of controlling the flow of pixel data, also controls the Counters, the CPU V-Blank Pins, and the Memory Write decoding for VRAM. For the counters, the TCU is responsible incrementing the VC when then HC is finished, and for clearing each counter when it has reached the end of its count (800 for HC, 525 for VC). When the Counters are in BLANK (H-Blank or V-Blank), the TCU makes sure that the VGA port only gets black pixels. In V-Blank, the TCU also flips a V-Blank pin that the CPU reads to know it is time to update VRAM. If the V-Blank pin is not active, the CPU should not write to VRAM. When the CPU does write to VRAM, the TCU acts as a controller to determine, based on the address, which of its internal memory devices to write to. Additionally, it is responsible for strobing the H-Sync and V-Sync signals on the VGA port. 
+#### Other Timing Control Unit Behaviors:
+The Timing Control Unit (TCU), On top of controlling the flow of pixel data, also controls the Counters, the CPU V-Blank Pins, and the Memory Write decoding for VRAM. 
+
+##### Enforcing Black Pixels:
+For the counters, the TCU is responsible incrementing the VC when then HC is finished, and for clearing each counter when it has reached the end of its count (800 for HC, 525 for VC). When the counters are in BLANK (H-Blank or V-Blank), the TCU makes sure that the VGA port only gets black pixels. 
+
+##### Status Information:
+The TCU also passes a status byte to the CPU. The status byte signals the CPU when the PPU is in either V-Blank (bit 7) or H-Blank (bit 6), and also gives a 6-bit frame counter (bits 5-0). Since there are 60 frames displayed per second, a 6-bit counter is pretty close to a per-second counter (time drift of 6% or 0.06 seconds). Given the inaccuracy, it is not a good idea to use this as an actual timer, but instead a rough estimate for effects of short duration (instead, use the timer interrupt!).
 
 <br>
 
