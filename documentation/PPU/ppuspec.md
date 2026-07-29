@@ -193,4 +193,4 @@ The fourth and final byte represents which of the 16 unique sprites to render. T
 - Memory Mapped to Addresses 0xBD0 - 0xC0F
 - **Inputs:** WD, ADDR, WE
 - **Outputs:** TileSel
-<br>Each byte in this map holds an 8-bit color. This is indexed by the 6-bits stored inside the Pixel Buffer. While only the bottom 16 bytes (aka Palette 0) are addressable by the Tile ROM. However, the Sprites have access to the other 3 palettes are able to be used by the sprites using the Palette0 and Palette1 bits in the Sprite_Math byte. This is a low latency translation unit to convert from a color code to an 8-bit color. 
+<br>Each byte in this map holds an 8-bit color. This is indexed by the 6-bits stored inside the Pixel Buffer. Only the bottom 16 bytes (aka Palette 0) are addressable by the Tile ROM. Sprites on the other hand have access to the other 3 palettes using the Palette0 and Palette1 bits in the Sprite_Math byte. This is a low latency translation unit to convert from a color-code to an 8-bit color. 
