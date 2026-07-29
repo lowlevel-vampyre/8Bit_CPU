@@ -98,7 +98,7 @@ The Pixel Calculator, or PXC, is the controller to decide which pixel to output.
 - Pixel_Data
   
 #### Calculating which pixel to output:
-The process for calculating which pixel to output is decently complicated, and requires many hops between VRAM units, and many arithmetic computations. The first step is determining whether a Sprite overlaps with the current pixel (If the Sprite Disable bit in Sprite_Math is on, this following step is skipped and the tile pixel is passed through). The way to do this is simple: A sprite is always an 8x8 image, and so for each axis (x & y) you subtract the sprite position from the pixel position. If the result is between 0 and 7, then you have an overlap (when calculating the overlap, the Shake bit from Sprite_Math is added to the Sprite X position). In the event of an overlap, the PXC calculates which pixel it needs to grab from the Sprite ROM. How it does this is detailed in the ***Pixel Math*** section. 
+The process for calculating which pixel to output is decently complicated, and requires many hops between VRAM units, and many arithmetic computations. The first step is determining whether a Sprite overlaps with the current pixel (If the Sprite Disable bit in Sprite_Math is on, this following step is skipped and the tile pixel is passed through). The way to do this is simple: A sprite is always an 8x8 image, and so for each axis (x & y) you subtract the sprite position from the pixel position. If the result is between 0 and 7, then you have an overlap (when calculating the overlap, the Shake bit from Sprite_Math is added to the Sprite X position). In the event of an overlap, the PXC calculates which pixel it needs to grab from the Sprite ROM. How it does this is detailed in the ***Sprite Calculations*** section. 
 
 Once the Sprite Pixel Address is passed to the Sprite ROM, the resulting Pixel byte is returned to the PXC. Now the PXC has both pixel bytes, it splits them both into high and low pixels. Then, if the Sprite pixel is transparent, the tile data is output and padded with zeros to become 6 bits. Otherwise, the sprite pixel is output, and the output is padded with the values of Palette0 (bit 4) and Palette1 (bit 5). At this point, the PXC's job is complete, and the pixel is stored in the Pixel Buffer for the following cycle.
 
@@ -119,7 +119,14 @@ The Diagonal-Flip is almost as simple. To do this, we simply swap the X and Y co
 
 <br>The only complication is that these operations are not commutative, so the proper order is Diagonal Flip --> X-Flip and/or Y-Flip (the flips are commutative). 
 
-##### Shake
+##### Sprite Disable:
+This simply disables the sprite temporarily. This can be used to make a sprite invisible, and modulating this each frame allows for an "Invisible" effect while still being actually visible. This does not work well while moving, and barely works well while still. Depending on what frequency you modulate at, you can get different effects. A 50% duty cycle will most likely work best for "Invisible" visuals.
+
+##### Dither:
+The Dither bit is an idea that could give a cool effect equivalent to invisibility. It changes its behaviors depending on if we are on an odd or even frame. On an odd frame, it disables the odd x pixel on odd y lines, and even x pixel on even y lines. The behavior is flipped for even frames. This ***should, hopefully*** produce a convincing invisibility effect. Or it could look like trash.
+
+##### Shake:
+The shake bit is always added to the Sprites X coordinates. This offsets the sprite by one without changing their position. Modulating this every frame allows a "shake" or "shiver" effect.
 
 <br>
 
@@ -161,7 +168,7 @@ VRAM is split into 6 separate modules that hold some information for the PPU. Th
     - Bit 3: Sprite Disable
     - Bit 4: Palette0
     - Bit 5: Palette1
-    - Bit 6: unused
+    - Bit 6: Dither
     - Bit 7: Shake
 
 <br>These each correspond to a different operation in the Pixel Calculator. This allows full rotation, transformation, invisibility, effects using different palettes, and a single pixel shake. I go into more detail on how these are utilized in the ***Pixel Calculator*** section. 
