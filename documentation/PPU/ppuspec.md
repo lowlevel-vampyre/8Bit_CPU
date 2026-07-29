@@ -98,6 +98,7 @@ The Pixel Calculator, or PXC, is the controller to decide which pixel to output.
 - 4xSprite_Y
 - 4xSprite_Math
 - 4xSprite_Index
+- Frame
 
 ##### Outputs: 
 - Sprite_Index
@@ -134,7 +135,7 @@ This simply disables the sprite temporarily. This can be used to make a sprite i
 The Dither bit is an idea that could give a cool effect equivalent to invisibility. It changes its behaviors depending on if we are on an odd or even frame. On an odd frame, it disables the odd x pixel on odd y lines, and even x pixel on even y lines. The behavior is flipped for even frames. This ***should, hopefully*** produce a convincing invisibility effect. Or it could look like trash.
 
 ##### Shake:
-The shake bit is always added to the Sprites X coordinates. This offsets the sprite by one without changing their position. Modulating this every frame allows a "shake" or "shiver" effect.
+The shake bit is always added to the Sprites X coordinates. This offsets the sprite by one without changing their position. Modulating this gives a "shake" or "shiver" effect.
 
 <br>
 
