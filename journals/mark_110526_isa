@@ -211,7 +211,7 @@ as well have a look at it:
 
 # Interrupt Registers (0xFF5 - 0xFFC, 8B Hardware Interrupt Addresses)
     0xFF5 - 0xFF6    Controller Select Interrupt Bytes
-    0xFF7 - 0xFF8    Audio Pin 2 Interrupt Bytes
+    0xFF7 - 0xFF8    Audio Pin 1 Interrupt Bytes
     0xFF9 - 0xFFA    Audio Pin 2 Interrupt Bytes
     0xFFB - 0xFFC    Timer Interrupt Bytes
 
